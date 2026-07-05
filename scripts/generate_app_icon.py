@@ -47,6 +47,110 @@ def draw_background(size: int = SIZE) -> Image.Image:
     return img
 
 
+def draw_polygon_gradient(
+    img: Image.Image,
+    points: list[tuple[float, float]],
+    base_color: tuple[int, int, int],
+    highlight_color: tuple[int, int, int],
+    highlight_direction: tuple[float, float] = (0, -1),
+) -> None:
+    """Fill a polygon with a subtle directional gradient."""
+    mask = Image.new("L", img.size, 0)
+    draw_mask = ImageDraw.Draw(mask)
+    draw_mask.polygon(points, fill=255)
+
+    # Create gradient layer, transparent outside the polygon
+    grad = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    pixels = grad.load()
+    min_x = min(p[0] for p in points)
+    max_x = max(p[0] for p in points)
+    min_y = min(p[1] for p in points)
+    max_y = max(p[1] for p in points)
+
+    dx, dy = highlight_direction
+    for y in range(int(min_y), int(max_y) + 1):
+        for x in range(int(min_x), int(max_x) + 1):
+            if mask.getpixel((x, y)):
+                # normalized position within bounding box
+                nx = (x - min_x) / (max_x - min_x) if max_x != min_x else 0
+                ny = (y - min_y) / (max_y - min_y) if max_y != min_y else 0
+                t = nx * dx + ny * dy
+                t = max(0.0, min(1.0, (t + 1) / 2))
+                color = lerp_color(base_color, highlight_color, t * 0.6)
+                pixels[x, y] = color + (255,)
+
+    img.alpha_composite(grad)
+
+
+def draw_bull(size: int = SIZE) -> Image.Image:
+    """Draw a side-profile bull looking back, centered on a transparent canvas."""
+    img = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+
+    # Coordinates are for a 1024 canvas; scale if needed
+    scale = size / SIZE
+
+    def s(p: tuple[float, float]) -> tuple[float, float]:
+        return (p[0] * scale, p[1] * scale)
+
+    # Bull silhouette: head facing left, looking back toward upper right
+    bull_points = [
+        s((420, 680)),  # chest bottom
+        s((360, 620)),  # neck base
+        s((330, 520)),  # neck top
+        s((280, 480)),  # jaw
+        s((260, 420)),  # nose
+        s((280, 380)),  # forehead start
+        s((340, 360)),  # forehead top
+        s((380, 300)),  # horn base front
+        s((360, 220)),  # horn tip front
+        s((400, 280)),  # horn base back
+        s((430, 360)),  # between horns
+        s((460, 260)),  # back horn tip
+        s((480, 360)),  # back horn base
+        s((500, 420)),  # poll/top of head
+        s((520, 480)),  # ear/back of head
+        s((560, 520)),  # back of neck
+        s((620, 580)),  # shoulder hump
+        s((640, 660)),  # back line
+        s((600, 720)),  # rear
+        s((500, 740)),  # belly
+    ]
+
+    draw_polygon_gradient(
+        img,
+        bull_points,
+        base_color=BRONZE,
+        highlight_color=HIGHLIGHT,
+        highlight_direction=(0.3, -1),
+    )
+
+    # Eye highlight
+    eye_x, eye_y = s((310, 430))
+    draw.ellipse([eye_x - 8, eye_y - 8, eye_x + 8, eye_y + 8], fill=TEXT_COLOR)
+
+    # Nostril shadow
+    nostril_x, nostril_y = s((270, 420))
+    draw.ellipse([nostril_x - 6, nostril_y - 4, nostril_x + 6, nostril_y + 4], fill=(50, 30, 10, 180))
+
+    # Soft shadow under bull
+    shadow_y = s((0, 760))[1]
+    draw.ellipse(
+        [s((320, 0))[0], shadow_y, s((680, 0))[0], shadow_y + 40],
+        fill=SHADOW,
+    )
+
+    return img
+
+
+def compose_icon(size: int = SIZE) -> Image.Image:
+    """Compose background + bull into the final icon."""
+    icon = draw_background(size)
+    bull = draw_bull(size)
+    icon.alpha_composite(bull)
+    return icon
+
+
 if __name__ == "__main__":
-    icon = draw_background()
+    icon = compose_icon()
     icon.save(ROOT / "app_icon_1024.png")
