@@ -41,3 +41,11 @@ def test_text_present():
     bbox = draw.textbbox((0, 0), "BullNook", font=font)
     assert bbox[2] - bbox[0] > 0
     assert bbox[3] - bbox[1] > 0
+
+
+def test_final_icon():
+    output = ROOT / "app_icon_1024.png"
+    assert output.exists()
+    img = Image.open(output)
+    assert img.size == (1024, 1024)
+    assert img.mode in ("RGB", "RGBA")

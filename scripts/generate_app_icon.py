@@ -182,5 +182,10 @@ def draw_text(img: Image.Image, text: str = "BullNook") -> Image.Image:
 
 
 if __name__ == "__main__":
+    old_icon = ROOT / "app_icon_1024.png"
+    backup = ROOT / "app_icon_1024_horn.png"
+    if old_icon.exists() and not backup.exists():
+        old_icon.rename(backup)
+
     icon = compose_icon()
     icon.save(ROOT / "app_icon_1024.png")
