@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 
 from scripts.generate_app_icon import draw_background, draw_bull
 
@@ -24,3 +24,20 @@ def test_bull_layer():
     # There should be non-transparent pixels in the center area
     bbox = bull.getbbox()
     assert bbox is not None
+
+
+def test_text_present():
+    img = Image.new("RGBA", (1024, 1024), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+    font_size = 92
+    try:
+        font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", font_size)
+    except OSError:
+        try:
+            font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", font_size)
+        except OSError:
+            font = ImageFont.load_default()
+
+    bbox = draw.textbbox((0, 0), "BullNook", font=font)
+    assert bbox[2] - bbox[0] > 0
+    assert bbox[3] - bbox[1] > 0

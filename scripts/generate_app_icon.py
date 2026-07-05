@@ -144,11 +144,41 @@ def draw_bull(size: int = SIZE) -> Image.Image:
 
 
 def compose_icon(size: int = SIZE) -> Image.Image:
-    """Compose background + bull into the final icon."""
+    """Compose background + bull + text into the final icon."""
     icon = draw_background(size)
     bull = draw_bull(size)
     icon.alpha_composite(bull)
+    icon = draw_text(icon)
     return icon
+
+
+def draw_text(img: Image.Image, text: str = "BullNook") -> Image.Image:
+    """Draw the brand name centered near the bottom."""
+    from PIL import ImageFont
+
+    draw = ImageDraw.Draw(img)
+    size = img.size[0]
+
+    # Try to load a system sans-serif font; fall back to default
+    font_size = int(size * 0.09)
+    try:
+        font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", font_size)
+    except OSError:
+        try:
+            font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", font_size)
+        except OSError:
+            font = ImageFont.load_default()
+
+    bbox = draw.textbbox((0, 0), text, font=font)
+    text_width = bbox[2] - bbox[0]
+    text_height = bbox[3] - bbox[1]
+    x = (size - text_width) // 2
+    y = int(size * 0.82) - text_height // 2
+
+    # Subtle shadow for readability on gold
+    draw.text((x + 3, y + 3), text, font=font, fill=(60, 40, 10, 160))
+    draw.text((x, y), text, font=font, fill=TEXT_COLOR + (255,))
+    return img
 
 
 if __name__ == "__main__":
