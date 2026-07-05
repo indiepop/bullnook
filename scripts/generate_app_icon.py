@@ -16,7 +16,8 @@ MID_GOLD = (184, 134, 11)       # #B8860B
 DARK_BRONZE = (139, 105, 20)    # #8B6914
 BRONZE = (139, 69, 19)          # #8B4513
 BRONZE_LIGHT = (160, 82, 45)    # #A0522D
-HIGHLIGHT = (255, 230, 120)     # bright gold highlight
+HIGHLIGHT = (255, 235, 140)     # bright gold highlight
+SPECULAR = (255, 250, 220)      # near-white specular
 TEXT_COLOR = (255, 248, 220)    # #FFF8DC
 SHADOW = (60, 40, 10, 120)
 
@@ -76,7 +77,7 @@ def draw_polygon_gradient(
                 ny = (y - min_y) / (max_y - min_y) if max_y != min_y else 0
                 t = nx * dx + ny * dy
                 t = max(0.0, min(1.0, (t + 1) / 2))
-                color = lerp_color(base_color, highlight_color, t * 0.6)
+                color = lerp_color(base_color, highlight_color, t * 0.7)
                 pixels[x, y] = color + (255,)
 
     img.alpha_composite(grad)
@@ -136,8 +137,64 @@ def draw_thick_curve(
         draw.ellipse([x - w, y - w, x + w, y + w], fill=color)
 
 
+def draw_metal_horn(
+    img: Image.Image,
+    base: tuple[float, float],
+    control: tuple[float, float],
+    tip: tuple[float, float],
+    width_base: float,
+    width_tip: float,
+) -> None:
+    """Draw a metallic gold horn with base shadow, body gradient, highlight ridge and specular spot."""
+    # Dark underside shadow
+    draw_thick_curve(
+        img,
+        (base[0] + 8, base[1] + 8),
+        (control[0] + 6, control[1] + 6),
+        (tip[0] + 4, tip[1] + 4),
+        width_base * 0.9,
+        width_tip * 0.9,
+        (60, 35, 10, 140),
+        steps=100,
+    )
+
+    # Main horn body: gradient from bronze base to gold tip
+    for i in range(100):
+        t = i / 99
+        x = (1 - t) ** 2 * base[0] + 2 * (1 - t) * t * control[0] + t ** 2 * tip[0]
+        y = (1 - t) ** 2 * base[1] + 2 * (1 - t) * t * control[1] + t ** 2 * tip[1]
+        w = width_base * (1 - t) + width_tip * t
+        # Color transitions from dark bronze to bright gold
+        body_color = lerp_color((120, 70, 25), (255, 215, 90), t)
+        draw = ImageDraw.Draw(img)
+        draw.ellipse([x - w, y - w, x + w, y + w], fill=body_color + (255,))
+
+    # Bright highlight ridge along top/outside
+    draw_thick_curve(
+        img,
+        (base[0] - 8, base[1] - 8),
+        (control[0] - 6, control[1] - 6),
+        (tip[0] - 3, tip[1] - 3),
+        width_base * 0.35,
+        width_tip * 0.35,
+        HIGHLIGHT + (255,),
+        steps=100,
+    )
+
+    # Sharp specular spot near the upper curve
+    spec_t = 0.55
+    spec_x = (1 - spec_t) ** 2 * base[0] + 2 * (1 - spec_t) * spec_t * control[0] + spec_t ** 2 * tip[0]
+    spec_y = (1 - spec_t) ** 2 * base[1] + 2 * (1 - spec_t) * spec_t * control[1] + spec_t ** 2 * tip[1]
+    spec_w = width_base * (1 - spec_t) + width_tip * spec_t
+    draw = ImageDraw.Draw(img)
+    draw.ellipse(
+        [spec_x - spec_w * 0.25, spec_y - spec_w * 0.35, spec_x + spec_w * 0.15, spec_y + spec_w * 0.15],
+        fill=SPECULAR + (200,),
+    )
+
+
 def draw_bull(size: int = SIZE) -> Image.Image:
-    """Draw a front-facing bull head inspired by the Chicago Bulls logo."""
+    """Draw a front-facing metallic bull head with upward-pointing horns."""
     img = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
 
@@ -148,171 +205,121 @@ def draw_bull(size: int = SIZE) -> Image.Image:
 
     # Main bull head: rounded shield shape
     head_points = [
-        s((512, 395)),  # top center between horns
-        s((470, 400)),  # left forehead upper
-        s((430, 420)),  # left forehead
-        s((395, 455)),  # left temple
-        s((372, 505)),  # left cheek upper
-        s((365, 560)),  # left cheek lower
-        s((385, 615)),  # left jaw
-        s((440, 650)),  # left chin corner
-        s((512, 665)),  # chin center
-        s((584, 650)),  # right chin corner
-        s((639, 615)),  # right jaw
-        s((659, 560)),  # right cheek lower
-        s((652, 505)),  # right cheek upper
-        s((629, 455)),  # right temple
-        s((594, 420)),  # right forehead
-        s((554, 400)),  # right forehead upper
+        s((512, 405)),  # top center between horns
+        s((470, 410)),  # left forehead upper
+        s((430, 430)),  # left forehead
+        s((395, 465)),  # left temple
+        s((372, 515)),  # left cheek upper
+        s((365, 570)),  # left cheek lower
+        s((385, 625)),  # left jaw
+        s((440, 660)),  # left chin corner
+        s((512, 675)),  # chin center
+        s((584, 660)),  # right chin corner
+        s((639, 625)),  # right jaw
+        s((659, 570)),  # right cheek lower
+        s((652, 515)),  # right cheek upper
+        s((629, 465)),  # right temple
+        s((594, 430)),  # right forehead
+        s((554, 410)),  # right forehead upper
     ]
 
     draw_polygon_radial_gradient(
         img,
         head_points,
-        center_color=BRONZE_LIGHT,
-        edge_color=BRONZE,
+        center_color=(180, 110, 55),
+        edge_color=(110, 60, 25),
     )
 
-    # Left horn: two-segment thick curve for angular Chicago Bulls shape
-    # Segment 1: base up and out
-    draw_thick_curve(
+    # Metallic rim light on left and right edges of face
+    rim_left = [
+        s((365, 560)),
+        s((375, 470)),
+        s((395, 445)),
+        s((385, 465)),
+        s((370, 555)),
+    ]
+    draw_polygon_gradient(img, rim_left, (80, 45, 20), HIGHLIGHT, highlight_direction=(-1, 0))
+    rim_right = [
+        s((659, 560)),
+        s((649, 470)),
+        s((629, 445)),
+        s((639, 465)),
+        s((654, 555)),
+    ]
+    draw_polygon_gradient(img, rim_right, (80, 45, 20), HIGHLIGHT, highlight_direction=(1, 0))
+
+    # Upward-pointing metallic horns - thick, curved up and slightly outward
+    draw_metal_horn(
         img,
-        s((445, 425)),
-        s((405, 395)),
-        s((360, 365)),
-        width_start=44,
-        width_end=32,
-        color=(170, 110, 45, 255),
-        steps=60,
+        s((445, 430)),   # base
+        s((350, 340)),   # control up and out
+        s((390, 255)),   # tip up and slightly out
+        width_base=52,
+        width_tip=16,
     )
-    # Segment 2: forward and down to tip
-    draw_thick_curve(
+    draw_metal_horn(
         img,
-        s((360, 365)),
-        s((355, 450)),
-        s((405, 540)),
-        width_start=32,
-        width_end=16,
-        color=(170, 110, 45, 255),
-        steps=80,
-    )
-    # Highlights
-    draw_thick_curve(
-        img,
-        s((440, 410)),
-        s((405, 385)),
-        s((365, 360)),
-        width_start=14,
-        width_end=10,
-        color=HIGHLIGHT + (255,),
-        steps=60,
-    )
-    draw_thick_curve(
-        img,
-        s((365, 370)),
-        s((362, 445)),
-        s((408, 525)),
-        width_start=10,
-        width_end=5,
-        color=HIGHLIGHT + (255,),
-        steps=80,
+        s((579, 430)),
+        s((674, 340)),
+        s((634, 255)),
+        width_base=52,
+        width_tip=16,
     )
 
-    # Right horn: mirror
-    draw_thick_curve(
-        img,
-        s((579, 425)),
-        s((619, 395)),
-        s((664, 365)),
-        width_start=44,
-        width_end=32,
-        color=(170, 110, 45, 255),
-        steps=60,
-    )
-    draw_thick_curve(
-        img,
-        s((664, 365)),
-        s((669, 450)),
-        s((619, 540)),
-        width_start=32,
-        width_end=16,
-        color=(170, 110, 45, 255),
-        steps=80,
-    )
-    draw_thick_curve(
-        img,
-        s((584, 410)),
-        s((619, 385)),
-        s((659, 360)),
-        width_start=14,
-        width_end=10,
-        color=HIGHLIGHT + (255,),
-        steps=60,
-    )
-    draw_thick_curve(
-        img,
-        s((659, 370)),
-        s((662, 445)),
-        s((616, 525)),
-        width_start=10,
-        width_end=5,
-        color=HIGHLIGHT + (255,),
-        steps=80,
-    )
+    # Forehead center shine
+    draw.ellipse([s((492, 420))[0], s((492, 420))[1], s((532, 450))[0], s((532, 450))[1]],
+                 fill=HIGHLIGHT + (60,))
 
     # Angry brow ridges - dark brown, solid
-    brow_color = (95, 52, 30, 230)
+    brow_color = (85, 48, 26, 230)
     # Left brow
     draw.polygon(
-        [s((445, 475)), s((495, 485)), s((505, 510)), s((455, 505))],
+        [s((445, 485)), s((495, 495)), s((505, 520)), s((455, 515))],
         fill=brow_color,
     )
     # Right brow
     draw.polygon(
-        [s((579, 475)), s((529, 485)), s((519, 510)), s((569, 505))],
+        [s((579, 485)), s((529, 495)), s((519, 520)), s((569, 515))],
         fill=brow_color,
     )
 
-    # Eyes - Chicago Bulls style: white with black pupils
-    for ex, ey in ((465, 525), (559, 525)):
+    # Eyes - fierce white with black pupils
+    for ex, ey in ((465, 535), (559, 535)):
         eye_x = s((ex, ey))[0]
         eye_y = s((ex, ey))[1]
-        # White of eye
         draw.ellipse(
             [eye_x - 14, eye_y - 8, eye_x + 14, eye_y + 8],
             fill=TEXT_COLOR,
         )
-        # Black pupil
         draw.ellipse(
             [eye_x - 8, eye_y - 4, eye_x + 8, eye_y + 4],
             fill=(25, 15, 5, 250),
         )
-        # Highlight
         draw.ellipse(
             [eye_x - 3, eye_y - 2, eye_x + 3, eye_y + 2],
-            fill=HIGHLIGHT + (180,),
+            fill=SPECULAR + (180,),
         )
 
     # Forehead furrow lines
-    draw.line([s((495, 430)), s((512, 440)), s((529, 430))], fill=(80, 45, 25, 150), width=3)
+    draw.line([s((495, 440)), s((512, 450)), s((529, 440))], fill=(70, 40, 22, 150), width=3)
 
-    # Nose ring (golden)
-    ring_x, ring_y = s((512, 605))
-    draw.ellipse([ring_x - 10, ring_y - 10, ring_x + 10, ring_y + 10], outline=HIGHLIGHT + (255,), width=3)
+    # Nose ring (bright gold)
+    ring_x, ring_y = s((512, 615))
+    draw.ellipse([ring_x - 11, ring_y - 11, ring_x + 11, ring_y + 11], outline=HIGHLIGHT + (255,), width=4)
     draw.ellipse([ring_x - 3, ring_y - 3, ring_x + 3, ring_y + 3], fill=HIGHLIGHT + (255,))
 
     # Flaring nostrils
     for nx in (492, 532):
-        nostril_x = s((nx, 585))[0]
-        nostril_y = s((nx, 585))[1]
+        nostril_x = s((nx, 595))[0]
+        nostril_y = s((nx, 595))[1]
         draw.ellipse(
             [nostril_x - 11, nostril_y - 7, nostril_x + 11, nostril_y + 7],
             fill=(35, 22, 10, 240),
         )
 
-    # Mouth line - slight frown/aggression
+    # Mouth line
     draw.arc(
-        [s((475, 625))[0], s((475, 625))[1], s((549, 655))[0], s((549, 655))[1]],
+        [s((475, 635))[0], s((475, 635))[1], s((549, 665))[0], s((549, 665))[1]],
         start=200,
         end=340,
         fill=(55, 32, 18, 190),
@@ -320,7 +327,7 @@ def draw_bull(size: int = SIZE) -> Image.Image:
     )
 
     # Soft shadow under head
-    shadow_y = s((0, 690))[1]
+    shadow_y = s((0, 700))[1]
     draw.ellipse(
         [s((380, 0))[0], shadow_y, s((644, 0))[0], shadow_y + 40],
         fill=SHADOW,
