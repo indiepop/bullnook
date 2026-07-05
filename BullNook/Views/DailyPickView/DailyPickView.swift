@@ -34,6 +34,9 @@ struct DailyPickView: View {
                 if viewModel == nil {
                     viewModel = DailyPickViewModel(context: context)
                 }
+                if KeychainManager.load() == nil {
+                    showSettings = true
+                }
             }
         }
     }

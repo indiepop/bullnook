@@ -2,20 +2,33 @@
 //  ContentView.swift
 //  BullNook
 //
-//  Created by Yangzhuo on 2026/7/5.
-//
 
 import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        TabView {
+            DailyPickView()
+                .tabItem {
+                    Label("每日推荐", systemImage: "flame")
+                }
+
+            WatchlistView()
+                .tabItem {
+                    Label("自选股", systemImage: "star")
+                }
+
+            HistoricalPicksView()
+                .tabItem {
+                    Label("历史", systemImage: "clock.arrow.circlepath")
+                }
+
+            SettingsView()
+                .tabItem {
+                    Label("设置", systemImage: "gearshape")
+                }
         }
-        .padding()
+        .accentColor(Color.appAccentGold)
     }
 }
 
