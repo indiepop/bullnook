@@ -1,11 +1,10 @@
 //
-//  BullNookApp.swift
+//  BullnookApp.swift
 //  BullNook
-//
-//  Created by Yangzhuo on 2026/7/5.
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct BullNookApp: App {
@@ -13,5 +12,15 @@ struct BullNookApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: [
+            Stock.self,
+            DailyPick.self,
+            HistoricalPick.self,
+            KLineData.self,
+            F10Metric.self,
+            WatchlistItem.self,
+            SectorData.self,
+            DragonTigerData.self
+        ])
     }
 }
