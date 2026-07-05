@@ -6,6 +6,8 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var settingsViewModel = SettingsViewModel()
+
     var body: some View {
         TabView {
             DailyPickView()
@@ -29,6 +31,7 @@ struct ContentView: View {
                 }
         }
         .accentColor(Color.appAccentGold)
+        .environment(settingsViewModel)
     }
 }
 

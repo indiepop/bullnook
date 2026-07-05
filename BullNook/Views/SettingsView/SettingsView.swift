@@ -1,13 +1,13 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @State private var viewModel = SettingsViewModel()
+    @Environment(SettingsViewModel.self) private var viewModel
 
     var body: some View {
         NavigationStack {
             Form {
                 Section("LLM 服务商") {
-                    Picker("服务商", selection: $viewModel.provider) {
+                    Picker("服务商", selection: Bindable(viewModel).provider) {
                         ForEach(LLMProvider.allCases) { provider in
                             Text(provider.rawValue).tag(provider)
                         }
@@ -16,7 +16,7 @@ struct SettingsView: View {
                 }
 
                 Section("API Key") {
-                    SecureField("输入 API Key", text: $viewModel.apiKey)
+                    SecureField("输入 API Key", text: Bindable(viewModel).apiKey)
                         .textContentType(.password)
 
                     Button("保存") {
@@ -38,11 +38,16 @@ struct SettingsView: View {
                 }
             }
             .navigationTitle("设置")
-            .alert("已保存", isPresented: $viewModel.showSavedConfirmation) {
+            .alert("已保存", isPresented: Bindable(viewModel).showSavedConfirmation) {
                 Button("确定", role: .cancel) { }
             } message: {
                 Text("LLM API Key 已保存到钥匙串。")
             }
         }
     }
+}
+
+#Preview {
+    SettingsView()
+        .environment(SettingsViewModel())
 }
