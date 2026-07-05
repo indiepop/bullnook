@@ -6,193 +6,438 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		01BF6D1A2C3B1AF78569CA60 /* WatchlistItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0125E8790A1D387C075C07 /* WatchlistItem.swift */; };
+		06360A3075067A648C1E5959 /* F10Metric.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5047B97DA8E29DA02DD1777 /* F10Metric.swift */; };
+		107E29EC1E60F499545D755B /* PickCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DB995F057C22F193756D105 /* PickCard.swift */; };
+		10DE18D411E21654166A2EF2 /* LLMAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 818BE27B031F139D5D8A1172 /* LLMAnalyzer.swift */; };
+		152FE6E1C96FE6F5A1808A4B /* TencentAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40ABE9BBCD9B752A9EB0EE1A /* TencentAPI.swift */; };
+		1877DF56CD464B0226A85B8C /* DailyPick.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42CCA0F527F40E3B7AA73EF /* DailyPick.swift */; };
+		280E895863838F530A940BB2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7A65FDB98B12FE4468206A /* ContentView.swift */; };
+		2864235BE75640F0F5C97998 /* SectorData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E05B9F4DF4779DEC3B2DC16 /* SectorData.swift */; };
+		35CA0F1B0C9CF5D25F2AD0D1 /* EastMoneyAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AC09F95815A485BEEF18697 /* EastMoneyAPI.swift */; };
+		48B3CCA000F3EFC03085FB1D /* DragonTigerData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D76962B53B746D55C65D352B /* DragonTigerData.swift */; };
+		48C44D21ADEC9B01BB8F94B5 /* BullnookWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A30B9899E266ECB34E6AAF9 /* BullnookWidgetBundle.swift */; };
+		54FAF384DA0B13EC6DB88F04 /* BullNookApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5276A685675B378B8792DF /* BullNookApp.swift */; };
+		67CB55F95240A4C4210C278F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C5DC920174815AA4949E0D8B /* Assets.xcassets */; };
+		680A440D2F2D3D45CAFC79FC /* Stock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11E42C31A767AF2C01F6F13B /* Stock.swift */; };
+		6DBFF91411FC0157575697A5 /* DailyPick.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42CCA0F527F40E3B7AA73EF /* DailyPick.swift */; };
+		72BA2EC20964825EF0482854 /* NetworkClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F3CECB0003C84EC2F2834CF /* NetworkClient.swift */; };
+		7324F6FA1413D00800B8A5C1 /* KLineChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331B3E07F86739DC6D040F55 /* KLineChartView.swift */; };
+		73BDA76728C8DECBC1DF59B6 /* StockDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0716ABB753E18E7BFD070087 /* StockDetailViewModel.swift */; };
+		78BDFE3CD7983CB1B8977CDC /* StockCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D99A35EF428A91F200E7FA3 /* StockCache.swift */; };
+		7B4A1E45FBB3CC6D9061251B /* WatchlistItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0125E8790A1D387C075C07 /* WatchlistItem.swift */; };
+		8082494B4E82CD7C5B87303A /* PickEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27BD73F3ED64B0DFD08BE707 /* PickEngine.swift */; };
+		8B69C5EF34F87F43A00DEF2D /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D84AC4542CC18C2E9FA9119 /* SettingsViewModel.swift */; };
+		8C36B81E64E5FC397D7B2304 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E5A4BC5D4FB606D6BBACD9 /* Theme.swift */; };
+		93E212F5DD3A53FCD870A71C /* DailyPickViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498C56A508407479CA5AAB6E /* DailyPickViewModel.swift */; };
+		951F223E99007AF0C9D25F40 /* AnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8157ECC0ED844DE80E86B016 /* AnalysisView.swift */; };
+		9599E89C64FA77FF41BD74CA /* StockDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D062DD1E0E7E9DEB4AFC719 /* StockDetailView.swift */; };
+		98D64B707558A3D5EC70B139 /* HistoricalPicksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F67452319C32E674B9EF7F5 /* HistoricalPicksView.swift */; };
+		9F139219B762B85B0025FE8F /* KLineData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A55AE815A786BF6C016E99E4 /* KLineData.swift */; };
+		9F8AFFB7C051806EB79293DA /* BullnookWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D60EBB78E83C61C8EB4922B /* BullnookWidget.swift */; };
+		B9AD7150A28535AA63B23BF8 /* DisclaimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 770DFE3162F6E856FEE7F503 /* DisclaimerView.swift */; };
+		C13F8351232EAF14C68D7CF2 /* WatchlistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18DA82720FE1AF06CD8CAEB6 /* WatchlistView.swift */; };
+		C311114ADB7A1E3B6BA8EDA5 /* KLineData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A55AE815A786BF6C016E99E4 /* KLineData.swift */; };
+		C5865F530B8478F2AF036CC1 /* SinaAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 704770BA4870D3798B37FA36 /* SinaAPI.swift */; };
+		C660023595EF9C06E93126CE /* HistoricalPick.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D38864AAFF310C2A477026 /* HistoricalPick.swift */; };
+		C7722D154AEE2C612AC58DEB /* WatchlistViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 488FD58A882723EBE8917D17 /* WatchlistViewModel.swift */; };
+		C94C710B09D202D4A464286A /* F10View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 351D021733D4108F4942C974 /* F10View.swift */; };
+		D57FE850B0C757B30EC3B6AD /* WatchlistRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD80AC411A376704A006350B /* WatchlistRow.swift */; };
+		D6305943A5A59977AD11D816 /* SectorData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E05B9F4DF4779DEC3B2DC16 /* SectorData.swift */; };
+		D94F9EB88AC25DC310A9C66F /* HistoricalPick.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D38864AAFF310C2A477026 /* HistoricalPick.swift */; };
+		DA12919FC08F6A63E5BB1814 /* DragonTigerData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D76962B53B746D55C65D352B /* DragonTigerData.swift */; };
+		DD9AEF029989F6529BE5A030 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F3F277E177D7142015CCD1C /* LoadingView.swift */; };
+		DF81A6AC7F921782B82010D5 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50EC2D32A3892A5FE06CA0B /* SettingsView.swift */; };
+		E03F147E60BA430DD45500C8 /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDAED619F86556EA7D94B55 /* KeychainManager.swift */; };
+		EBD06050DB114B83A1B5E319 /* F10Metric.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5047B97DA8E29DA02DD1777 /* F10Metric.swift */; };
+		F9D5D0D6E207CDC9BC307594 /* Stock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11E42C31A767AF2C01F6F13B /* Stock.swift */; };
+		FB55EBF43A031DF684EF0420 /* DailyPickView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201C084B269E1B019A3A61A9 /* DailyPickView.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
-		C5729FD02FFA337C00FFDB52 /* BullNook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BullNook.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0716ABB753E18E7BFD070087 /* StockDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockDetailViewModel.swift; sourceTree = "<group>"; };
+		11E42C31A767AF2C01F6F13B /* Stock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stock.swift; sourceTree = "<group>"; };
+		18DA82720FE1AF06CD8CAEB6 /* WatchlistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistView.swift; sourceTree = "<group>"; };
+		1B5276A685675B378B8792DF /* BullNookApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BullNookApp.swift; sourceTree = "<group>"; };
+		201C084B269E1B019A3A61A9 /* DailyPickView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyPickView.swift; sourceTree = "<group>"; };
+		268F7941FA2C3DCDC7AF9306 /* BullNook.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = BullNook.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		26D63DCAE5432CA1E69B2E3A /* BullnookWidgetExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = BullnookWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		27BD73F3ED64B0DFD08BE707 /* PickEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickEngine.swift; sourceTree = "<group>"; };
+		2AC09F95815A485BEEF18697 /* EastMoneyAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EastMoneyAPI.swift; sourceTree = "<group>"; };
+		331B3E07F86739DC6D040F55 /* KLineChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KLineChartView.swift; sourceTree = "<group>"; };
+		351D021733D4108F4942C974 /* F10View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = F10View.swift; sourceTree = "<group>"; };
+		37D38864AAFF310C2A477026 /* HistoricalPick.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricalPick.swift; sourceTree = "<group>"; };
+		3D60EBB78E83C61C8EB4922B /* BullnookWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BullnookWidget.swift; sourceTree = "<group>"; };
+		3E05B9F4DF4779DEC3B2DC16 /* SectorData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectorData.swift; sourceTree = "<group>"; };
+		40ABE9BBCD9B752A9EB0EE1A /* TencentAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TencentAPI.swift; sourceTree = "<group>"; };
+		488FD58A882723EBE8917D17 /* WatchlistViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistViewModel.swift; sourceTree = "<group>"; };
+		498C56A508407479CA5AAB6E /* DailyPickViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyPickViewModel.swift; sourceTree = "<group>"; };
+		4A30B9899E266ECB34E6AAF9 /* BullnookWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BullnookWidgetBundle.swift; sourceTree = "<group>"; };
+		4F67452319C32E674B9EF7F5 /* HistoricalPicksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricalPicksView.swift; sourceTree = "<group>"; };
+		4FDAED619F86556EA7D94B55 /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
+		5B0125E8790A1D387C075C07 /* WatchlistItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistItem.swift; sourceTree = "<group>"; };
+		5D84AC4542CC18C2E9FA9119 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		5D99A35EF428A91F200E7FA3 /* StockCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockCache.swift; sourceTree = "<group>"; };
+		6A7A65FDB98B12FE4468206A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		6F3CECB0003C84EC2F2834CF /* NetworkClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkClient.swift; sourceTree = "<group>"; };
+		6F3F277E177D7142015CCD1C /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
+		704770BA4870D3798B37FA36 /* SinaAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SinaAPI.swift; sourceTree = "<group>"; };
+		770DFE3162F6E856FEE7F503 /* DisclaimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisclaimerView.swift; sourceTree = "<group>"; };
+		8157ECC0ED844DE80E86B016 /* AnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalysisView.swift; sourceTree = "<group>"; };
+		818BE27B031F139D5D8A1172 /* LLMAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMAnalyzer.swift; sourceTree = "<group>"; };
+		8DB995F057C22F193756D105 /* PickCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickCard.swift; sourceTree = "<group>"; };
+		9D062DD1E0E7E9DEB4AFC719 /* StockDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockDetailView.swift; sourceTree = "<group>"; };
+		A4E5A4BC5D4FB606D6BBACD9 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		A50EC2D32A3892A5FE06CA0B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		A55AE815A786BF6C016E99E4 /* KLineData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KLineData.swift; sourceTree = "<group>"; };
+		B5047B97DA8E29DA02DD1777 /* F10Metric.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = F10Metric.swift; sourceTree = "<group>"; };
+		C5DC920174815AA4949E0D8B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D76962B53B746D55C65D352B /* DragonTigerData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragonTigerData.swift; sourceTree = "<group>"; };
+		DD80AC411A376704A006350B /* WatchlistRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistRow.swift; sourceTree = "<group>"; };
+		E42CCA0F527F40E3B7AA73EF /* DailyPick.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyPick.swift; sourceTree = "<group>"; };
+		F720177F785652DDEDCE39FD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		C5729FD22FFA337C00FFDB52 /* BullNook */ = {isa = PBXFileSystemSynchronizedRootGroup; path = BullNook; sourceTree = "<group>"; };
-/* End PBXFileSystemSynchronizedRootGroup section */
-
-/* Begin PBXFrameworksBuildPhase section */
-		C5729FCD2FFA337C00FFDB52 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXFrameworksBuildPhase section */
-
 /* Begin PBXGroup section */
-		C5729FC72FFA337C00FFDB52 = {
+		089B3DB075958ACE96191384 /* BullNook */ = {
 			isa = PBXGroup;
 			children = (
-				C5729FD22FFA337C00FFDB52 /* BullNook */,
-				C5729FD12FFA337C00FFDB52 /* Products */,
+				C5DC920174815AA4949E0D8B /* Assets.xcassets */,
+				1B5276A685675B378B8792DF /* BullNookApp.swift */,
+				6A7A65FDB98B12FE4468206A /* ContentView.swift */,
+				C647C1D346670F13AE3267D0 /* Models */,
+				750EABEA7E9EA2129420A921 /* Services */,
+				9F9D71B1EAAC32AD8AE3C120 /* ViewModels */,
+				1D42555723F36582242C5656 /* Views */,
+			);
+			path = BullNook;
+			sourceTree = "<group>";
+		};
+		1D42555723F36582242C5656 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				ECBBF965A8136AAC1F3C72AD /* Components */,
+				9109C864BF942B40C2CF192B /* DailyPickView */,
+				DD3F0F4BC04767AFFFC2891D /* HistoricalPicksView */,
+				77E2BB6DEA11397203E30EE4 /* SettingsView */,
+				CA5DB9799FCB8C5449C7E070 /* StockDetailView */,
+				AFC1C3F557BF5E42F103E5AE /* WatchlistView */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		22E47334D428836B550C6B87 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				268F7941FA2C3DCDC7AF9306 /* BullNook.app */,
+				26D63DCAE5432CA1E69B2E3A /* BullnookWidgetExtension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6182C78E0E4CC63CF990EBD4 /* BullnookWidget */ = {
+			isa = PBXGroup;
+			children = (
+				3D60EBB78E83C61C8EB4922B /* BullnookWidget.swift */,
+				4A30B9899E266ECB34E6AAF9 /* BullnookWidgetBundle.swift */,
+				F720177F785652DDEDCE39FD /* Info.plist */,
+			);
+			path = BullnookWidget;
+			sourceTree = "<group>";
+		};
+		750EABEA7E9EA2129420A921 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				2AC09F95815A485BEEF18697 /* EastMoneyAPI.swift */,
+				4FDAED619F86556EA7D94B55 /* KeychainManager.swift */,
+				818BE27B031F139D5D8A1172 /* LLMAnalyzer.swift */,
+				6F3CECB0003C84EC2F2834CF /* NetworkClient.swift */,
+				27BD73F3ED64B0DFD08BE707 /* PickEngine.swift */,
+				704770BA4870D3798B37FA36 /* SinaAPI.swift */,
+				5D99A35EF428A91F200E7FA3 /* StockCache.swift */,
+				40ABE9BBCD9B752A9EB0EE1A /* TencentAPI.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		77E2BB6DEA11397203E30EE4 /* SettingsView */ = {
+			isa = PBXGroup;
+			children = (
+				A50EC2D32A3892A5FE06CA0B /* SettingsView.swift */,
+			);
+			path = SettingsView;
+			sourceTree = "<group>";
+		};
+		88565C45170BC726AC10D8AA = {
+			isa = PBXGroup;
+			children = (
+				089B3DB075958ACE96191384 /* BullNook */,
+				6182C78E0E4CC63CF990EBD4 /* BullnookWidget */,
+				22E47334D428836B550C6B87 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		C5729FD12FFA337C00FFDB52 /* Products */ = {
+		9109C864BF942B40C2CF192B /* DailyPickView */ = {
 			isa = PBXGroup;
 			children = (
-				C5729FD02FFA337C00FFDB52 /* BullNook.app */,
+				201C084B269E1B019A3A61A9 /* DailyPickView.swift */,
+				8DB995F057C22F193756D105 /* PickCard.swift */,
 			);
-			name = Products;
+			path = DailyPickView;
+			sourceTree = "<group>";
+		};
+		9F9D71B1EAAC32AD8AE3C120 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				498C56A508407479CA5AAB6E /* DailyPickViewModel.swift */,
+				5D84AC4542CC18C2E9FA9119 /* SettingsViewModel.swift */,
+				0716ABB753E18E7BFD070087 /* StockDetailViewModel.swift */,
+				488FD58A882723EBE8917D17 /* WatchlistViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		AFC1C3F557BF5E42F103E5AE /* WatchlistView */ = {
+			isa = PBXGroup;
+			children = (
+				DD80AC411A376704A006350B /* WatchlistRow.swift */,
+				18DA82720FE1AF06CD8CAEB6 /* WatchlistView.swift */,
+			);
+			path = WatchlistView;
+			sourceTree = "<group>";
+		};
+		C647C1D346670F13AE3267D0 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				E42CCA0F527F40E3B7AA73EF /* DailyPick.swift */,
+				D76962B53B746D55C65D352B /* DragonTigerData.swift */,
+				B5047B97DA8E29DA02DD1777 /* F10Metric.swift */,
+				37D38864AAFF310C2A477026 /* HistoricalPick.swift */,
+				A55AE815A786BF6C016E99E4 /* KLineData.swift */,
+				3E05B9F4DF4779DEC3B2DC16 /* SectorData.swift */,
+				11E42C31A767AF2C01F6F13B /* Stock.swift */,
+				5B0125E8790A1D387C075C07 /* WatchlistItem.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		CA5DB9799FCB8C5449C7E070 /* StockDetailView */ = {
+			isa = PBXGroup;
+			children = (
+				8157ECC0ED844DE80E86B016 /* AnalysisView.swift */,
+				351D021733D4108F4942C974 /* F10View.swift */,
+				331B3E07F86739DC6D040F55 /* KLineChartView.swift */,
+				9D062DD1E0E7E9DEB4AFC719 /* StockDetailView.swift */,
+			);
+			path = StockDetailView;
+			sourceTree = "<group>";
+		};
+		DD3F0F4BC04767AFFFC2891D /* HistoricalPicksView */ = {
+			isa = PBXGroup;
+			children = (
+				4F67452319C32E674B9EF7F5 /* HistoricalPicksView.swift */,
+			);
+			path = HistoricalPicksView;
+			sourceTree = "<group>";
+		};
+		ECBBF965A8136AAC1F3C72AD /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				770DFE3162F6E856FEE7F503 /* DisclaimerView.swift */,
+				6F3F277E177D7142015CCD1C /* LoadingView.swift */,
+				A4E5A4BC5D4FB606D6BBACD9 /* Theme.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		C5729FCF2FFA337C00FFDB52 /* BullNook */ = {
+		8AF5B8FDBCC1CE89B38B2F7E /* BullNook */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C5729FDB2FFA337C00FFDB52 /* Build configuration list for PBXNativeTarget "BullNook" */;
+			buildConfigurationList = 6199688E5E83F1E2F7D1CE5D /* Build configuration list for PBXNativeTarget "BullNook" */;
 			buildPhases = (
-				C5729FCC2FFA337C00FFDB52 /* Sources */,
-				C5729FCD2FFA337C00FFDB52 /* Frameworks */,
-				C5729FCE2FFA337C00FFDB52 /* Resources */,
+				8987C0AC99FE8DB7A060B910 /* Sources */,
+				1645048EC63E4B95D220FE21 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			fileSystemSynchronizedGroups = (
-				C5729FD22FFA337C00FFDB52 /* BullNook */,
-			);
 			name = BullNook;
 			packageProductDependencies = (
 			);
 			productName = BullNook;
-			productReference = C5729FD02FFA337C00FFDB52 /* BullNook.app */;
+			productReference = 268F7941FA2C3DCDC7AF9306 /* BullNook.app */;
 			productType = "com.apple.product-type.application";
+		};
+		CFF42F9A59D59702951C0DFE /* BullnookWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B9C47B76BA4622425C377A85 /* Build configuration list for PBXNativeTarget "BullnookWidgetExtension" */;
+			buildPhases = (
+				4EFC9F7576E0B2C26B396378 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BullnookWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = BullnookWidgetExtension;
+			productReference = 26D63DCAE5432CA1E69B2E3A /* BullnookWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		C5729FC82FFA337C00FFDB52 /* Project object */ = {
+		84451C505F473152C11BEA67 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2660;
-				LastUpgradeCheck = 2660;
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
 				TargetAttributes = {
-					C5729FCF2FFA337C00FFDB52 = {
-						CreatedOnToolsVersion = 26.6;
-					};
 				};
 			};
-			buildConfigurationList = C5729FCB2FFA337C00FFDB52 /* Build configuration list for PBXProject "BullNook" */;
+			buildConfigurationList = 49EFC8196D1FEFCA3F7D2233 /* Build configuration list for PBXProject "BullNook" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				en,
 				Base,
+				en,
 			);
-			mainGroup = C5729FC72FFA337C00FFDB52;
+			mainGroup = 88565C45170BC726AC10D8AA;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = C5729FD12FFA337C00FFDB52 /* Products */;
+			productRefGroup = 22E47334D428836B550C6B87 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				C5729FCF2FFA337C00FFDB52 /* BullNook */,
+				8AF5B8FDBCC1CE89B38B2F7E /* BullNook */,
+				CFF42F9A59D59702951C0DFE /* BullnookWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		C5729FCE2FFA337C00FFDB52 /* Resources */ = {
+		1645048EC63E4B95D220FE21 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				67CB55F95240A4C4210C278F /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		C5729FCC2FFA337C00FFDB52 /* Sources */ = {
+		4EFC9F7576E0B2C26B396378 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F8AFFB7C051806EB79293DA /* BullnookWidget.swift in Sources */,
+				48C44D21ADEC9B01BB8F94B5 /* BullnookWidgetBundle.swift in Sources */,
+				1877DF56CD464B0226A85B8C /* DailyPick.swift in Sources */,
+				DA12919FC08F6A63E5BB1814 /* DragonTigerData.swift in Sources */,
+				06360A3075067A648C1E5959 /* F10Metric.swift in Sources */,
+				C660023595EF9C06E93126CE /* HistoricalPick.swift in Sources */,
+				9F139219B762B85B0025FE8F /* KLineData.swift in Sources */,
+				2864235BE75640F0F5C97998 /* SectorData.swift in Sources */,
+				680A440D2F2D3D45CAFC79FC /* Stock.swift in Sources */,
+				7B4A1E45FBB3CC6D9061251B /* WatchlistItem.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8987C0AC99FE8DB7A060B910 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				951F223E99007AF0C9D25F40 /* AnalysisView.swift in Sources */,
+				54FAF384DA0B13EC6DB88F04 /* BullNookApp.swift in Sources */,
+				280E895863838F530A940BB2 /* ContentView.swift in Sources */,
+				6DBFF91411FC0157575697A5 /* DailyPick.swift in Sources */,
+				FB55EBF43A031DF684EF0420 /* DailyPickView.swift in Sources */,
+				93E212F5DD3A53FCD870A71C /* DailyPickViewModel.swift in Sources */,
+				B9AD7150A28535AA63B23BF8 /* DisclaimerView.swift in Sources */,
+				48B3CCA000F3EFC03085FB1D /* DragonTigerData.swift in Sources */,
+				35CA0F1B0C9CF5D25F2AD0D1 /* EastMoneyAPI.swift in Sources */,
+				EBD06050DB114B83A1B5E319 /* F10Metric.swift in Sources */,
+				C94C710B09D202D4A464286A /* F10View.swift in Sources */,
+				D94F9EB88AC25DC310A9C66F /* HistoricalPick.swift in Sources */,
+				98D64B707558A3D5EC70B139 /* HistoricalPicksView.swift in Sources */,
+				7324F6FA1413D00800B8A5C1 /* KLineChartView.swift in Sources */,
+				C311114ADB7A1E3B6BA8EDA5 /* KLineData.swift in Sources */,
+				E03F147E60BA430DD45500C8 /* KeychainManager.swift in Sources */,
+				10DE18D411E21654166A2EF2 /* LLMAnalyzer.swift in Sources */,
+				DD9AEF029989F6529BE5A030 /* LoadingView.swift in Sources */,
+				72BA2EC20964825EF0482854 /* NetworkClient.swift in Sources */,
+				107E29EC1E60F499545D755B /* PickCard.swift in Sources */,
+				8082494B4E82CD7C5B87303A /* PickEngine.swift in Sources */,
+				D6305943A5A59977AD11D816 /* SectorData.swift in Sources */,
+				DF81A6AC7F921782B82010D5 /* SettingsView.swift in Sources */,
+				8B69C5EF34F87F43A00DEF2D /* SettingsViewModel.swift in Sources */,
+				C5865F530B8478F2AF036CC1 /* SinaAPI.swift in Sources */,
+				F9D5D0D6E207CDC9BC307594 /* Stock.swift in Sources */,
+				78BDFE3CD7983CB1B8977CDC /* StockCache.swift in Sources */,
+				9599E89C64FA77FF41BD74CA /* StockDetailView.swift in Sources */,
+				73BDA76728C8DECBC1DF59B6 /* StockDetailViewModel.swift in Sources */,
+				152FE6E1C96FE6F5A1808A4B /* TencentAPI.swift in Sources */,
+				8C36B81E64E5FC397D7B2304 /* Theme.swift in Sources */,
+				01BF6D1A2C3B1AF78569CA60 /* WatchlistItem.swift in Sources */,
+				D57FE850B0C757B30EC3B6AD /* WatchlistRow.swift in Sources */,
+				C13F8351232EAF14C68D7CF2 /* WatchlistView.swift in Sources */,
+				C7722D154AEE2C612AC58DEB /* WatchlistViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		C5729FD92FFA337C00FFDB52 /* Debug */ = {
+		2493D9E796FD5227694A9F90 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = RVH4X64K43;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
+					"@executable_path/Frameworks",
 				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yangzhuo.BullNook;
 				SDKROOT = iphoneos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
-		C5729FDA2FFA337C00FFDB52 /* Release */ = {
+		433927C401C63876E95023C7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.yangzhuo.BullNook;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		75DF116D0551DCC03F210F1C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -220,11 +465,9 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = RVH4X64K43;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -232,106 +475,143 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				VALIDATE_PRODUCT = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
-		C5729FDC2FFA337C00FFDB52 /* Debug */ = {
+		BBADCA0FC098B7D5B93500D3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = RVH4X64K43;
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_FILE = BullnookWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.yangzhuo.BullNook;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yangzhuo.BullNook.widget;
+				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
-		C5729FDD2FFA337C00FFDB52 /* Release */ = {
+		E6A2AEC78B814B7B5D2F2691 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = RVH4X64K43;
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_FILE = BullnookWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.yangzhuo.BullNook;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yangzhuo.BullNook.widget;
+				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
+		EEDA7B151FE9D77BAB410BBA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C5729FCB2FFA337C00FFDB52 /* Build configuration list for PBXProject "BullNook" */ = {
+		49EFC8196D1FEFCA3F7D2233 /* Build configuration list for PBXProject "BullNook" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C5729FD92FFA337C00FFDB52 /* Debug */,
-				C5729FDA2FFA337C00FFDB52 /* Release */,
+				EEDA7B151FE9D77BAB410BBA /* Debug */,
+				75DF116D0551DCC03F210F1C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
-		C5729FDB2FFA337C00FFDB52 /* Build configuration list for PBXNativeTarget "BullNook" */ = {
+		6199688E5E83F1E2F7D1CE5D /* Build configuration list for PBXNativeTarget "BullNook" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C5729FDC2FFA337C00FFDB52 /* Debug */,
-				C5729FDD2FFA337C00FFDB52 /* Release */,
+				2493D9E796FD5227694A9F90 /* Debug */,
+				433927C401C63876E95023C7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
+		};
+		B9C47B76BA4622425C377A85 /* Build configuration list for PBXNativeTarget "BullnookWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BBADCA0FC098B7D5B93500D3 /* Debug */,
+				E6A2AEC78B814B7B5D2F2691 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = C5729FC82FFA337C00FFDB52 /* Project object */;
+	rootObject = 84451C505F473152C11BEA67 /* Project object */;
 }

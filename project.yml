@@ -1,0 +1,68 @@
+name: BullNook
+targets:
+  BullNook:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - BullNook
+    info:
+      path: Info.plist
+      properties:
+        CFBundleDisplayName: BullNook
+        CFBundleIdentifier: com.yangzhuo.BullNook
+        UILaunchScreen: {}
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: false
+          NSExceptionDomains:
+            hq.sinajs.cn:
+              NSExceptionAllowsInsecureHTTPLoads: true
+              NSIncludesSubdomains: true
+            quotes.sina.cn:
+              NSExceptionAllowsInsecureHTTPLoads: true
+              NSIncludesSubdomains: true
+            qt.gtimg.cn:
+              NSExceptionAllowsInsecureHTTPLoads: true
+              NSIncludesSubdomains: true
+            push2his.eastmoney.com:
+              NSExceptionAllowsInsecureHTTPLoads: true
+              NSIncludesSubdomains: true
+            datacenter-web.eastmoney.com:
+              NSExceptionAllowsInsecureHTTPLoads: true
+              NSIncludesSubdomains: true
+            push2.eastmoney.com:
+              NSExceptionAllowsInsecureHTTPLoads: true
+              NSIncludesSubdomains: true
+            searchapi.eastmoney.com:
+              NSExceptionAllowsInsecureHTTPLoads: true
+              NSIncludesSubdomains: true
+            f10.eastmoney.com:
+              NSExceptionAllowsInsecureHTTPLoads: true
+              NSIncludesSubdomains: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.yangzhuo.BullNook
+        SWIFT_VERSION: "5.0"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+
+  BullnookWidgetExtension:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: BullnookWidget
+      - path: BullNook/Models
+    info:
+      path: BullnookWidget/Info.plist
+      properties:
+        CFBundleDisplayName: BullnookWidget
+        CFBundleIdentifier: com.yangzhuo.BullNook.widget
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.yangzhuo.BullNook.widget
+        SWIFT_VERSION: "5.0"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        IPHONEOS_DEPLOYMENT_TARGET: "17.0"
