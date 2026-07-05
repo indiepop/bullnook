@@ -4,14 +4,43 @@ enum LLMProvider: String, CaseIterable, Identifiable {
     case deepSeek = "DeepSeek"
     case kimi = "Kimi"
     case qianwen = "通义千问"
+    case openAI = "OpenAI"
+    case claude = "Claude"
+    case zhipu = "智谱清言"
+    case custom = "自定义 (OpenAI 兼容)"
 
     var id: String { rawValue }
 
-    var baseURL: String {
+    var defaultBaseURL: String {
         switch self {
         case .deepSeek: return "https://api.deepseek.com/chat/completions"
         case .kimi: return "https://api.moonshot.cn/v1/chat/completions"
         case .qianwen: return "https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation"
+        case .openAI: return "https://api.openai.com/v1/chat/completions"
+        case .claude: return "https://api.anthropic.com/v1/messages"
+        case .zhipu: return "https://open.bigmodel.cn/api/paas/v4/chat/completions"
+        case .custom: return ""
+        }
+    }
+
+    var defaultModel: String {
+        switch self {
+        case .deepSeek: return "deepseek-chat"
+        case .kimi: return "moonshot-v1-8k"
+        case .qianwen: return "qwen-turbo"
+        case .openAI: return "gpt-4o-mini"
+        case .claude: return "claude-3-5-sonnet-20241022"
+        case .zhipu: return "glm-4-flash"
+        case .custom: return ""
+        }
+    }
+
+    var isOpenAICompatible: Bool {
+        switch self {
+        case .deepSeek, .kimi, .openAI, .zhipu, .custom:
+            return true
+        case .qianwen, .claude:
+            return false
         }
     }
 }
@@ -19,6 +48,8 @@ enum LLMProvider: String, CaseIterable, Identifiable {
 struct LLMConfig: Codable {
     var provider: String
     var apiKey: String
+    var customBaseURL: String?
+    var customModel: String?
 }
 
 actor LLMAnalyzer {
@@ -36,10 +67,14 @@ actor LLMAnalyzer {
 
         do {
             switch provider {
-            case .deepSeek, .kimi:
-                return try await callOpenAICompatible(provider: provider, apiKey: config.apiKey, prompt: prompt)
+            case .deepSeek, .kimi, .openAI, .zhipu:
+                return try await callOpenAICompatible(provider: provider, config: config, prompt: prompt)
+            case .custom:
+                return try await callCustom(config: config, prompt: prompt)
             case .qianwen:
                 return try await callQianwen(apiKey: config.apiKey, prompt: prompt)
+            case .claude:
+                return try await callClaude(apiKey: config.apiKey, prompt: prompt)
             }
         } catch {
             print("LLM analysis failed: \(error)")
@@ -62,11 +97,13 @@ actor LLMAnalyzer {
         """
     }
 
-    private func callOpenAICompatible(provider: LLMProvider, apiKey: String, prompt: String) async throws -> String {
-        guard let url = URL(string: provider.baseURL) else { throw NetworkError.invalidResponse }
+    // MARK: - OpenAI Compatible
+
+    private func callOpenAICompatible(provider: LLMProvider, config: LLMConfig, prompt: String) async throws -> String {
+        guard let url = URL(string: provider.defaultBaseURL) else { throw NetworkError.invalidResponse }
 
         let body: [String: Any] = [
-            "model": provider == .kimi ? "moonshot-v1-8k" : "deepseek-chat",
+            "model": provider.defaultModel,
             "messages": [
                 ["role": "user", "content": prompt]
             ],
@@ -78,7 +115,7 @@ actor LLMAnalyzer {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("Bearer \(config.apiKey)", forHTTPHeaderField: "Authorization")
         request.httpBody = bodyData
 
         let (data, response) = try await URLSession.shared.data(for: request)
@@ -96,11 +133,52 @@ actor LLMAnalyzer {
         return content.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
-    private func callQianwen(apiKey: String, prompt: String) async throws -> String {
-        guard let url = URL(string: LLMProvider.qianwen.baseURL) else { throw NetworkError.invalidResponse }
+    // MARK: - Custom OpenAI Compatible
+
+    private func callCustom(config: LLMConfig, prompt: String) async throws -> String {
+        let baseURL = config.customBaseURL?.trimmingCharacters(in: .whitespaces) ?? ""
+        let model = config.customModel?.trimmingCharacters(in: .whitespaces) ?? ""
+        guard !baseURL.isEmpty, let url = URL(string: baseURL) else { throw NetworkError.invalidResponse }
+        guard !model.isEmpty else { throw NetworkError.invalidResponse }
 
         let body: [String: Any] = [
-            "model": "qwen-turbo",
+            "model": model,
+            "messages": [
+                ["role": "user", "content": prompt]
+            ],
+            "temperature": 0.7,
+            "max_tokens": 300
+        ]
+        let bodyData = try JSONSerialization.data(withJSONObject: body)
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(config.apiKey)", forHTTPHeaderField: "Authorization")
+        request.httpBody = bodyData
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse, (200..<300).contains(httpResponse.statusCode) else {
+            throw NetworkError.invalidResponse
+        }
+
+        guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let choices = json["choices"] as? [[String: Any]],
+              let first = choices.first,
+              let message = first["message"] as? [String: Any],
+              let content = message["content"] as? String else {
+            throw NetworkError.decodingFailure
+        }
+        return content.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    // MARK: - Qianwen
+
+    private func callQianwen(apiKey: String, prompt: String) async throws -> String {
+        guard let url = URL(string: LLMProvider.qianwen.defaultBaseURL) else { throw NetworkError.invalidResponse }
+
+        let body: [String: Any] = [
+            "model": LLMProvider.qianwen.defaultModel,
             "input": [
                 "messages": [
                     ["role": "user", "content": prompt]
@@ -127,6 +205,41 @@ actor LLMAnalyzer {
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
               let output = json["output"] as? [String: Any],
               let text = output["text"] as? String else {
+            throw NetworkError.decodingFailure
+        }
+        return text.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    // MARK: - Claude
+
+    private func callClaude(apiKey: String, prompt: String) async throws -> String {
+        guard let url = URL(string: LLMProvider.claude.defaultBaseURL) else { throw NetworkError.invalidResponse }
+
+        let body: [String: Any] = [
+            "model": LLMProvider.claude.defaultModel,
+            "max_tokens": 300,
+            "messages": [
+                ["role": "user", "content": prompt]
+            ]
+        ]
+        let bodyData = try JSONSerialization.data(withJSONObject: body)
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(apiKey, forHTTPHeaderField: "x-api-key")
+        request.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
+        request.httpBody = bodyData
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse, (200..<300).contains(httpResponse.statusCode) else {
+            throw NetworkError.invalidResponse
+        }
+
+        guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let contentArray = json["content"] as? [[String: Any]],
+              let first = contentArray.first,
+              let text = first["text"] as? String else {
             throw NetworkError.decodingFailure
         }
         return text.trimmingCharacters(in: .whitespacesAndNewlines)

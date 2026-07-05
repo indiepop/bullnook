@@ -15,6 +15,17 @@ struct SettingsView: View {
                     .pickerStyle(.segmented)
                 }
 
+                if viewModel.provider == .custom {
+                    Section("自定义接口") {
+                        TextField("Base URL", text: Bindable(viewModel).customBaseURL)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                        TextField("Model 名称", text: Bindable(viewModel).customModel)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                    }
+                }
+
                 Section("API Key") {
                     SecureField("输入 API Key", text: Bindable(viewModel).apiKey)
                         .textContentType(.password)
@@ -22,7 +33,7 @@ struct SettingsView: View {
                     Button("保存") {
                         viewModel.saveConfig()
                     }
-                    .disabled(viewModel.apiKey.isEmpty)
+                    .disabled(viewModel.apiKey.isEmpty || (viewModel.provider == .custom && (viewModel.customBaseURL.isEmpty || viewModel.customModel.isEmpty)))
 
                     if viewModel.isConfigured {
                         Button("清除配置", role: .destructive) {
