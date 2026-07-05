@@ -82,8 +82,35 @@ def draw_polygon_gradient(
     img.alpha_composite(grad)
 
 
+def draw_thick_curve(
+    img: Image.Image,
+    p0: tuple[float, float],
+    p1: tuple[float, float],
+    p2: tuple[float, float],
+    width_start: float,
+    width_end: float,
+    color: tuple[int, int, int, int],
+    steps: int = 80,
+) -> None:
+    """Draw a thick quadratic Bezier curve as a series of overlapping circles."""
+    draw = ImageDraw.Draw(img)
+    for i in range(steps + 1):
+        t = i / steps
+        # Quadratic Bezier
+        x = (1 - t) ** 2 * p0[0] + 2 * (1 - t) * t * p1[0] + t ** 2 * p2[0]
+        y = (1 - t) ** 2 * p0[1] + 2 * (1 - t) * t * p1[1] + t ** 2 * p2[1]
+        w = width_start * (1 - t) + width_end * t
+        draw.ellipse([x - w, y - w, x + w, y + w], fill=color)
+
+
+# Metallic gold/bronze colors for horns
+HORN_BASE = (180, 120, 50, 255)
+HORN_TIP = (120, 80, 30, 255)
+HORN_HIGHLIGHT = (255, 230, 140, 255)
+
+
 def draw_bull(size: int = SIZE) -> Image.Image:
-    """Draw a side-profile bull looking back, centered on a transparent canvas."""
+    """Draw a realistic side-profile bull looking back, centered on a transparent canvas."""
     img = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
 
@@ -93,50 +120,115 @@ def draw_bull(size: int = SIZE) -> Image.Image:
     def s(p: tuple[float, float]) -> tuple[float, float]:
         return (p[0] * scale, p[1] * scale)
 
-    # Bull silhouette: head facing left, looking back toward upper right
-    bull_points = [
-        s((420, 680)),  # chest bottom
-        s((360, 620)),  # neck base
-        s((330, 520)),  # neck top
-        s((280, 480)),  # jaw
-        s((260, 420)),  # nose
-        s((280, 380)),  # forehead start
-        s((340, 360)),  # forehead top
-        s((380, 300)),  # horn base front
-        s((360, 220)),  # horn tip front
-        s((400, 280)),  # horn base back
-        s((430, 360)),  # between horns
-        s((460, 260)),  # back horn tip
-        s((480, 360)),  # back horn base
-        s((500, 420)),  # poll/top of head
-        s((520, 480)),  # ear/back of head
-        s((560, 520)),  # back of neck
-        s((620, 580)),  # shoulder hump
-        s((640, 660)),  # back line
-        s((600, 720)),  # rear
-        s((500, 740)),  # belly
+    # Main body + head silhouette (no horns, they are drawn separately)
+    body_points = [
+        s((515, 770)),  # belly rear
+        s((445, 755)),  # belly mid
+        s((395, 720)),  # chest bottom
+        s((355, 670)),  # front leg / chest
+        s((335, 610)),  # thick neck base front
+        s((315, 565)),  # jaw bottom
+        s((275, 540)),  # chin
+        s((230, 520)),  # nose tip
+        s((245, 490)),  # upper lip
+        s((265, 470)),  # nose bridge
+        s((300, 460)),  # forehead lower
+        s((340, 460)),  # forehead top
+        s((375, 470)),  # front horn base
+        s((410, 470)),  # between horns
+        s((445, 470)),  # back horn base
+        s((475, 490)),  # poll / top of head
+        s((500, 480)),  # small ear base
+        s((520, 505)),  # ear tip
+        s((540, 525)),  # back of head
+        s((580, 550)),  # neck back upper
+        s((640, 575)),  # shoulder hump
+        s((705, 615)),  # back
+        s((720, 670)),  # rear upper
+        s((690, 730)),  # rear bottom
+        s((610, 765)),  # rump
     ]
 
     draw_polygon_gradient(
         img,
-        bull_points,
+        body_points,
         base_color=BRONZE,
         highlight_color=HIGHLIGHT,
-        highlight_direction=(0.3, -1),
+        highlight_direction=(0.25, -1),
     )
 
-    # Eye highlight
-    eye_x, eye_y = s((310, 430))
-    draw.ellipse([eye_x - 8, eye_y - 8, eye_x + 8, eye_y + 8], fill=TEXT_COLOR)
+    # Front horn: thick crescent using quadratic bezier, extends outward and curls up
+    draw_thick_curve(
+        img,
+        s((385, 468)),   # base
+        s((260, 440)),   # control point (outward)
+        s((225, 360)),   # tip (out and slightly up)
+        width_start=28,
+        width_end=12,
+        color=HORN_BASE,
+        steps=80,
+    )
+    # Highlight ridge on front horn
+    draw_thick_curve(
+        img,
+        s((385, 455)),
+        s((275, 430)),
+        s((245, 360)),
+        width_start=10,
+        width_end=4,
+        color=HORN_HIGHLIGHT,
+        steps=80,
+    )
 
-    # Nostril shadow
-    nostril_x, nostril_y = s((270, 420))
-    draw.ellipse([nostril_x - 6, nostril_y - 4, nostril_x + 6, nostril_y + 4], fill=(50, 30, 10, 180))
+    # Back horn: mirror of front horn, extends outward and curls up
+    draw_thick_curve(
+        img,
+        s((435, 468)),   # base
+        s((560, 440)),   # control point (outward)
+        s((600, 360)),   # tip (out and slightly up)
+        width_start=28,
+        width_end=12,
+        color=HORN_BASE,
+        steps=80,
+    )
+    # Highlight ridge on back horn
+    draw_thick_curve(
+        img,
+        s((435, 455)),
+        s((545, 430)),
+        s((580, 360)),
+        width_start=10,
+        width_end=4,
+        color=HORN_HIGHLIGHT,
+        steps=80,
+    )
+
+    # Eye (white with dark pupil)
+    eye_x, eye_y = s((305, 490))
+    draw.ellipse([eye_x - 10, eye_y - 10, eye_x + 10, eye_y + 10], fill=TEXT_COLOR)
+    draw.ellipse([eye_x - 5, eye_y - 5, eye_x + 5, eye_y + 5], fill=(30, 20, 5, 230))
+    draw.ellipse([eye_x - 2, eye_y - 2, eye_x + 2, eye_y + 2], fill=TEXT_COLOR)
+
+    # Nostril
+    nostril_x, nostril_y = s((238, 510))
+    draw.ellipse([nostril_x - 8, nostril_y - 5, nostril_x + 8, nostril_y + 5], fill=(50, 30, 10, 200))
+
+    # Nose ring (small golden ring) - classic bull marker
+    ring_x, ring_y = s((235, 535))
+    draw.ellipse([ring_x - 10, ring_y - 10, ring_x + 10, ring_y + 10], outline=HIGHLIGHT + (255,), width=3)
+    draw.ellipse([ring_x - 3, ring_y - 3, ring_x + 3, ring_y + 3], fill=HIGHLIGHT + (255,))
+
+    # Mouth line
+    draw.line([s((255, 545)), s((290, 535))], fill=(80, 50, 20, 180), width=3)
+
+    # Small ear inner shadow
+    ear_x, ear_y = s((510, 490))
+    draw.ellipse([ear_x - 10, ear_y - 14, ear_x + 7, ear_y + 7], fill=(100, 60, 30, 160))
 
     # Soft shadow under bull
-    shadow_y = s((0, 760))[1]
+    shadow_y = s((0, 790))[1]
     draw.ellipse(
-        [s((320, 0))[0], shadow_y, s((680, 0))[0], shadow_y + 40],
+        [s((380, 0))[0], shadow_y, s((680, 0))[0], shadow_y + 45],
         fill=SHADOW,
     )
 
