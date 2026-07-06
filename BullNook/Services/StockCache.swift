@@ -62,18 +62,34 @@ final class StockCache {
     // MARK: - KLine
 
     func kline(symbol: String, period: KLinePeriod) -> [KLineData] {
+        let key = klineKey(symbol: symbol, period: period)
         let descriptor = FetchDescriptor<KLineData>(
-            predicate: #Predicate { $0.symbol == symbol },
+            predicate: #Predicate { $0.symbol == key },
             sortBy: [SortDescriptor(\.date)]
         )
         return (try? context.fetch(descriptor)) ?? []
     }
 
-    func save(kline: [KLineData]) {
-        for item in kline {
+    func save(kline: [KLineData], symbol: String, period: KLinePeriod) {
+        let key = klineKey(symbol: symbol, period: period)
+
+        // Remove stale data for the same symbol/period
+        let descriptor = FetchDescriptor<KLineData>(predicate: #Predicate { $0.symbol == key })
+        if let stale = try? context.fetch(descriptor) {
+            for item in stale {
+                context.delete(item)
+            }
+        }
+
+        for var item in kline {
+            item.symbol = key
             context.insert(item)
         }
         try? context.save()
+    }
+
+    private func klineKey(symbol: String, period: KLinePeriod) -> String {
+        "\(symbol)-\(period.rawValue)"
     }
 
     // MARK: - Watchlist

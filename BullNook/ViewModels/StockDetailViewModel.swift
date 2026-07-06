@@ -30,7 +30,7 @@ final class StockDetailViewModel {
             let today = DateFormatter.yyyyMMdd.string(from: Date())
             kline = await EastMoneyAPI.kline(symbol: symbol, period: selectedPeriod, start: "20240101", end: today)
             if !kline.isEmpty {
-                cache.save(kline: kline)
+                cache.save(kline: kline, symbol: symbol, period: selectedPeriod)
             }
         }
 
