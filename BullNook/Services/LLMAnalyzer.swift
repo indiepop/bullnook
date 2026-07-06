@@ -13,7 +13,8 @@ enum LLMProvider: String, CaseIterable, Identifiable {
     var defaultBaseURL: String {
         switch self {
         case .deepSeek: return "https://api.deepseek.com/chat/completions"
-        case .kimi, .kimiCode: return "https://api.moonshot.cn/v1/chat/completions"
+        case .kimi: return "https://api.moonshot.cn/v1/chat/completions"
+        case .kimiCode: return "https://api.kimi.com/coding/v1/chat/completions"
         case .qianwen: return "https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation"
         case .zhipu: return "https://open.bigmodel.cn/api/paas/v4/chat/completions"
         case .custom: return ""
