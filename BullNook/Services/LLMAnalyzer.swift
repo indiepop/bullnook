@@ -3,9 +3,8 @@ import Foundation
 enum LLMProvider: String, CaseIterable, Identifiable {
     case deepSeek = "DeepSeek"
     case kimi = "Kimi"
+    case kimiCode = "Kimi Code"
     case qianwen = "通义千问"
-    case openAI = "OpenAI"
-    case claude = "Claude"
     case zhipu = "智谱清言"
     case custom = "自定义 (OpenAI 兼容)"
 
@@ -14,10 +13,8 @@ enum LLMProvider: String, CaseIterable, Identifiable {
     var defaultBaseURL: String {
         switch self {
         case .deepSeek: return "https://api.deepseek.com/chat/completions"
-        case .kimi: return "https://api.moonshot.cn/v1/chat/completions"
+        case .kimi, .kimiCode: return "https://api.moonshot.cn/v1/chat/completions"
         case .qianwen: return "https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation"
-        case .openAI: return "https://api.openai.com/v1/chat/completions"
-        case .claude: return "https://api.anthropic.com/v1/messages"
         case .zhipu: return "https://open.bigmodel.cn/api/paas/v4/chat/completions"
         case .custom: return ""
         }
@@ -27,9 +24,8 @@ enum LLMProvider: String, CaseIterable, Identifiable {
         switch self {
         case .deepSeek: return "deepseek-chat"
         case .kimi: return "moonshot-v1-8k"
+        case .kimiCode: return "kimi-code"
         case .qianwen: return "qwen-turbo"
-        case .openAI: return "gpt-4o-mini"
-        case .claude: return "claude-3-5-sonnet-20241022"
         case .zhipu: return "glm-4-flash"
         case .custom: return ""
         }
@@ -37,9 +33,9 @@ enum LLMProvider: String, CaseIterable, Identifiable {
 
     var isOpenAICompatible: Bool {
         switch self {
-        case .deepSeek, .kimi, .openAI, .zhipu, .custom:
+        case .deepSeek, .kimi, .kimiCode, .zhipu, .custom:
             return true
-        case .qianwen, .claude:
+        case .qianwen:
             return false
         }
     }
@@ -67,14 +63,12 @@ actor LLMAnalyzer {
 
         do {
             switch provider {
-            case .deepSeek, .kimi, .openAI, .zhipu:
+            case .deepSeek, .kimi, .kimiCode, .zhipu:
                 return try await callOpenAICompatible(provider: provider, config: config, prompt: prompt)
             case .custom:
                 return try await callCustom(config: config, prompt: prompt)
             case .qianwen:
                 return try await callQianwen(apiKey: config.apiKey, prompt: prompt)
-            case .claude:
-                return try await callClaude(apiKey: config.apiKey, prompt: prompt)
             }
         } catch {
             print("LLM analysis failed: \(error)")
@@ -210,38 +204,29 @@ actor LLMAnalyzer {
         return text.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
-    // MARK: - Claude
+    // MARK: - Connectivity Test
 
-    private func callClaude(apiKey: String, prompt: String) async throws -> String {
-        guard let url = URL(string: LLMProvider.claude.defaultBaseURL) else { throw NetworkError.invalidResponse }
-
-        let body: [String: Any] = [
-            "model": LLMProvider.claude.defaultModel,
-            "max_tokens": 300,
-            "messages": [
-                ["role": "user", "content": prompt]
-            ]
-        ]
-        let bodyData = try JSONSerialization.data(withJSONObject: body)
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue(apiKey, forHTTPHeaderField: "x-api-key")
-        request.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
-        request.httpBody = bodyData
-
-        let (data, response) = try await URLSession.shared.data(for: request)
-        guard let httpResponse = response as? HTTPURLResponse, (200..<300).contains(httpResponse.statusCode) else {
-            throw NetworkError.invalidResponse
+    func testConnection(config: LLMConfig) async -> (success: Bool, message: String) {
+        guard !config.apiKey.isEmpty else {
+            return (false, "请先输入 API Key")
+        }
+        guard let provider = LLMProvider(rawValue: config.provider) else {
+            return (false, "未知的服务商")
         }
 
-        guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let contentArray = json["content"] as? [[String: Any]],
-              let first = contentArray.first,
-              let text = first["text"] as? String else {
-            throw NetworkError.decodingFailure
+        let prompt = "你好，请回复：连接成功"
+        do {
+            switch provider {
+            case .deepSeek, .kimi, .kimiCode, .zhipu:
+                _ = try await callOpenAICompatible(provider: provider, config: config, prompt: prompt)
+            case .custom:
+                _ = try await callCustom(config: config, prompt: prompt)
+            case .qianwen:
+                _ = try await callQianwen(apiKey: config.apiKey, prompt: prompt)
+            }
+            return (true, "连接成功")
+        } catch {
+            return (false, "连接失败：\(error.localizedDescription)")
         }
-        return text.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

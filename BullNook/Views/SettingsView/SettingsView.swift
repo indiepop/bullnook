@@ -12,11 +12,8 @@ struct SettingsView: View {
                             Text(provider.rawValue).tag(provider)
                         }
                     }
-                    .pickerStyle(.segmented)
-                }
 
-                if viewModel.provider == .custom {
-                    Section("自定义接口") {
+                    if viewModel.provider == .custom {
                         TextField("Base URL", text: Bindable(viewModel).customBaseURL)
                             .textInputAutocapitalization(.never)
                             .autocorrectionDisabled()
@@ -34,6 +31,31 @@ struct SettingsView: View {
                         viewModel.saveConfig()
                     }
                     .disabled(viewModel.apiKey.isEmpty || (viewModel.provider == .custom && (viewModel.customBaseURL.isEmpty || viewModel.customModel.isEmpty)))
+
+                    Button {
+                        Task {
+                            await viewModel.testConnection()
+                        }
+                    } label: {
+                        HStack {
+                            Text("测试连通性")
+                            if viewModel.isTestingConnection {
+                                Spacer()
+                                ProgressView()
+                            }
+                        }
+                    }
+                    .disabled(viewModel.apiKey.isEmpty || viewModel.isTestingConnection)
+
+                    if let status = viewModel.testStatus {
+                        HStack {
+                            Image(systemName: status.isSuccess ? "checkmark.circle.fill" : "xmark.circle.fill")
+                                .foregroundStyle(status.isSuccess ? Color.green : Color.red)
+                            Text(status.message)
+                                .font(.caption)
+                                .foregroundStyle(status.isSuccess ? Color.green : Color.red)
+                        }
+                    }
 
                     if viewModel.isConfigured {
                         Button("清除配置", role: .destructive) {
