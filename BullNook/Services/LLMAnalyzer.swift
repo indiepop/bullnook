@@ -97,12 +97,13 @@ actor LLMAnalyzer {
     private func callOpenAICompatible(provider: LLMProvider, config: LLMConfig, prompt: String) async throws -> String {
         guard let url = URL(string: provider.defaultBaseURL) else { throw NetworkError.invalidResponse }
 
+        let temperature: Double = provider == .kimiCode ? 1.0 : 0.7
         let body: [String: Any] = [
             "model": provider.defaultModel,
             "messages": [
                 ["role": "user", "content": prompt]
             ],
-            "temperature": 0.7,
+            "temperature": temperature,
             "max_tokens": 300
         ]
         let bodyData = try JSONSerialization.data(withJSONObject: body)
