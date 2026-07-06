@@ -20,6 +20,7 @@ struct WatchlistView: View {
                 if viewModel == nil {
                     viewModel = WatchlistViewModel(context: context)
                 }
+                viewModel?.loadItems()
                 viewModel?.startAutoRefresh()
             }
             .onDisappear {
