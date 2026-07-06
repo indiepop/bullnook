@@ -24,7 +24,7 @@ enum LLMProvider: String, CaseIterable, Identifiable {
         switch self {
         case .deepSeek: return "deepseek-chat"
         case .kimi: return "moonshot-v1-8k"
-        case .kimiCode: return "kimi-code"
+        case .kimiCode: return "kimi-k2.7-code"
         case .qianwen: return "qwen-turbo"
         case .zhipu: return "glm-4-flash"
         case .custom: return ""
@@ -113,8 +113,11 @@ actor LLMAnalyzer {
         request.httpBody = bodyData
 
         let (data, response) = try await URLSession.shared.data(for: request)
-        guard let httpResponse = response as? HTTPURLResponse, (200..<300).contains(httpResponse.statusCode) else {
+        guard let httpResponse = response as? HTTPURLResponse else {
             throw NetworkError.invalidResponse
+        }
+        guard (200..<300).contains(httpResponse.statusCode) else {
+            throw NetworkError.apiError(statusCode: httpResponse.statusCode, message: errorMessage(from: data))
         }
 
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -152,8 +155,11 @@ actor LLMAnalyzer {
         request.httpBody = bodyData
 
         let (data, response) = try await URLSession.shared.data(for: request)
-        guard let httpResponse = response as? HTTPURLResponse, (200..<300).contains(httpResponse.statusCode) else {
+        guard let httpResponse = response as? HTTPURLResponse else {
             throw NetworkError.invalidResponse
+        }
+        guard (200..<300).contains(httpResponse.statusCode) else {
+            throw NetworkError.apiError(statusCode: httpResponse.statusCode, message: errorMessage(from: data))
         }
 
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -192,8 +198,11 @@ actor LLMAnalyzer {
         request.httpBody = bodyData
 
         let (data, response) = try await URLSession.shared.data(for: request)
-        guard let httpResponse = response as? HTTPURLResponse, (200..<300).contains(httpResponse.statusCode) else {
+        guard let httpResponse = response as? HTTPURLResponse else {
             throw NetworkError.invalidResponse
+        }
+        guard (200..<300).contains(httpResponse.statusCode) else {
+            throw NetworkError.apiError(statusCode: httpResponse.statusCode, message: errorMessage(from: data))
         }
 
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -225,8 +234,27 @@ actor LLMAnalyzer {
                 _ = try await callQianwen(apiKey: config.apiKey, prompt: prompt)
             }
             return (true, "连接成功")
+        } catch let error as NetworkError {
+            return (false, "连接失败：\(error.localizedDescription)")
         } catch {
             return (false, "连接失败：\(error.localizedDescription)")
         }
+    }
+
+    // MARK: - Helpers
+
+    private func errorMessage(from data: Data) -> String {
+        if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+            if let error = json["error"] as? [String: Any], let msg = error["message"] as? String {
+                return msg
+            }
+            if let msg = json["message"] as? String {
+                return msg
+            }
+        }
+        if let text = String(data: data, encoding: .utf8), !text.isEmpty {
+            return String(text.prefix(200))
+        }
+        return "未知错误"
     }
 }

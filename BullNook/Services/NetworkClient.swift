@@ -5,6 +5,22 @@ enum NetworkError: Error {
     case httpError(Int)
     case decodingFailure
     case missingData
+    case apiError(statusCode: Int, message: String)
+
+    var localizedDescription: String {
+        switch self {
+        case .invalidResponse:
+            return "Invalid response"
+        case .httpError(let code):
+            return "HTTP error \(code)"
+        case .decodingFailure:
+            return "Failed to decode response"
+        case .missingData:
+            return "Missing data"
+        case .apiError(let code, let message):
+            return "API error \(code): \(message)"
+        }
+    }
 }
 
 actor NetworkClient {
