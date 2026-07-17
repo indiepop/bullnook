@@ -181,7 +181,19 @@ final class StockCache {
     }
 
     func save(sectors: [SectorData]) {
+        if let date = sectors.first?.date {
+            deleteAllSectors(for: date)
+        }
         for item in sectors { context.insert(item) }
+        try? context.save()
+    }
+
+    func deleteAllSectors(for date: String) {
+        let descriptor = FetchDescriptor<SectorData>(predicate: #Predicate { $0.date == date })
+        guard let items = try? context.fetch(descriptor) else { return }
+        for item in items {
+            context.delete(item)
+        }
         try? context.save()
     }
 

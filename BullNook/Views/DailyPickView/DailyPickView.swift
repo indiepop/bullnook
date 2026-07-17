@@ -107,6 +107,24 @@ struct DailyPickView: View {
                 .foregroundStyle(Color.appTextSecondary)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
+
+            if !viewModel.hasSectorData {
+                Button {
+                    Task {
+                        await viewModel.refreshSectorSummary()
+                    }
+                } label: {
+                    HStack {
+                        Image(systemName: "arrow.clockwise")
+                        Text("更新板块数据")
+                    }
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(Color.appAccentGold)
+                .padding(.top, 4)
+            }
         }
         .padding()
         .background(Color.appCardBackground)

@@ -33,6 +33,11 @@ final class DailyPickViewModel {
         return picks.contains { Calendar.current.isDateInToday($0.generatedAt) }
     }
 
+    var hasSectorData: Bool {
+        let today = DateFormatter.yyyyMMdd.string(from: Date())
+        return !cache.sectors(for: today).isEmpty
+    }
+
     init(context: ModelContext) {
         self.context = context
         self.cache = StockCache(context: context)
@@ -158,6 +163,28 @@ final class DailyPickViewModel {
                 date: today
             )
         }
+    }
+
+    func refreshSectorSummary() async {
+        guard !isLoading else { return }
+
+        isLoading = true
+        errorMessage = nil
+        defer { isLoading = false }
+
+        let today = DateFormatter.yyyyMMdd.string(from: Date())
+        let sectors = await EastMoneyAPI.sectorList()
+
+        guard !sectors.isEmpty else {
+            errorMessage = "板块数据获取失败，请检查网络后重试。"
+            print("[DailyPick] sectorList returned empty for \(today)")
+            return
+        }
+
+        cache.save(sectors: sectors)
+        sectorSummary = generateSectorSummary(sectors: sectors, date: today)
+        lastRefreshedAt = Date()
+        print("[DailyPick] sector summary refreshed for \(today)")
     }
 
     private func enrichPicksWithLLM(
