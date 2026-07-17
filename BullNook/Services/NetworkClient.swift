@@ -29,14 +29,28 @@ actor NetworkClient {
     private var lastRequestTime: Date = .distantPast
     private let minInterval: TimeInterval = 0.3
 
-    func fetch(_ url: URL, retries: Int = 3, delay: TimeInterval = 1.0) async throws -> Data {
+    func fetch(_ url: URL, headers: [String: String] = [:], retries: Int = 3, delay: TimeInterval = 1.0) async throws -> Data {
+        var request = URLRequest(url: url)
+        for (key, value) in headers {
+            request.setValue(value, forHTTPHeaderField: key)
+        }
+        return try await fetch(request, retries: retries, delay: delay)
+    }
+
+    func fetch(_ request: URLRequest, retries: Int = 3, delay: TimeInterval = 1.0) async throws -> Data {
+        var mutableRequest = request
+        // URLRequest 默认超时 60s，未显式设置时统一改为 15s，避免数据源异常时长时间挂起
+        if mutableRequest.timeoutInterval == 60 {
+            mutableRequest.timeoutInterval = 15
+        }
+
         var attempt = 0
         var lastError: Error?
 
         while attempt < retries {
             await throttle()
             do {
-                let (data, response) = try await URLSession.shared.data(from: url)
+                let (data, response) = try await URLSession.shared.data(for: mutableRequest)
                 guard let httpResponse = response as? HTTPURLResponse else {
                     throw NetworkError.invalidResponse
                 }
@@ -55,9 +69,27 @@ actor NetworkClient {
         throw lastError ?? NetworkError.missingData
     }
 
-    func fetchString(_ url: URL, retries: Int = 3, delay: TimeInterval = 1.0) async throws -> String {
-        let data = try await fetch(url, retries: retries, delay: delay)
-        guard let string = String(data: data, encoding: .utf8) else {
+    func fetchString(_ url: URL, headers: [String: String] = [:], retries: Int = 3, delay: TimeInterval = 1.0) async throws -> String {
+        let data = try await fetch(url, headers: headers, retries: retries, delay: delay)
+        // Sina APIs return GBK/GB2312; UTF-8 decoding keeps ASCII digits/commas intact,
+        // so numeric parsing still works. Try UTF-8 first, then fall back to GB18030.
+        if let string = String(data: data, encoding: .utf8) {
+            return string
+        }
+        let gbEncoding = CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.GB_18030_2000.rawValue))
+        guard let string = String(data: data, encoding: String.Encoding(rawValue: gbEncoding)) else {
+            throw NetworkError.decodingFailure
+        }
+        return string
+    }
+
+    func fetchString(_ request: URLRequest, retries: Int = 3, delay: TimeInterval = 1.0) async throws -> String {
+        let data = try await fetch(request, retries: retries, delay: delay)
+        if let string = String(data: data, encoding: .utf8) {
+            return string
+        }
+        let gbEncoding = CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.GB_18030_2000.rawValue))
+        guard let string = String(data: data, encoding: String.Encoding(rawValue: gbEncoding)) else {
             throw NetworkError.decodingFailure
         }
         return string

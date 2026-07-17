@@ -17,8 +17,8 @@ class DailyPick {
     var newsScore: Double
     var analysis: String
     var generatedAt: Date
-    var currentPrice: Double
-    var changePercent: Double
+    var currentPrice: Double = 0
+    var changePercent: Double = 0
 
     init(id: String, date: String, rank: Int, stockCode: String, stockName: String, industry: String, score: Double, reasonSummary: String, sectorScore: Double, lhbScore: Double, trendScore: Double, newsScore: Double, analysis: String, generatedAt: Date = Date(), currentPrice: Double = 0, changePercent: Double = 0) {
         self.id = id

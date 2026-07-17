@@ -25,7 +25,8 @@ struct SinaAPI {
         guard let url = URL(string: "https://hq.sinajs.cn/list=\(list)") else { return [] }
 
         do {
-            let raw = try await NetworkClient.shared.fetchString(url)
+            let headers = ["Referer": "https://finance.sina.com.cn"]
+            let raw = try await NetworkClient.shared.fetchString(url, headers: headers)
             return parseQuotes(raw: raw, symbols: symbols)
         } catch {
             print("Sina real-time quote fetch failed: \(error)")
@@ -69,7 +70,9 @@ struct SinaAPI {
         guard let url = URL(string: "https://quotes.sina.cn/cn/api/quotes.php?symbol=\(symbol)&datalen=\(count)&fq=1&d=\(d)") else { return [] }
 
         do {
-            let raw = try await NetworkClient.shared.fetchString(url)
+            let headers = ["Referer": "https://finance.sina.com.cn",
+                           "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15"]
+            let raw = try await NetworkClient.shared.fetchString(url, headers: headers)
             return parseKLine(raw: raw, symbol: symbol)
         } catch {
             print("Sina kline fetch failed: \(error)")

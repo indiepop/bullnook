@@ -13,6 +13,7 @@
 		10DE18D411E21654166A2EF2 /* LLMAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 818BE27B031F139D5D8A1172 /* LLMAnalyzer.swift */; };
 		152FE6E1C96FE6F5A1808A4B /* TencentAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40ABE9BBCD9B752A9EB0EE1A /* TencentAPI.swift */; };
 		1877DF56CD464B0226A85B8C /* DailyPick.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42CCA0F527F40E3B7AA73EF /* DailyPick.swift */; };
+		1DC42E407512BD603BC15426 /* SearchEngineAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 399001B7D02331DA01DD0894 /* SearchEngineAPI.swift */; };
 		280E895863838F530A940BB2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7A65FDB98B12FE4468206A /* ContentView.swift */; };
 		2864235BE75640F0F5C97998 /* SectorData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E05B9F4DF4779DEC3B2DC16 /* SectorData.swift */; };
 		35CA0F1B0C9CF5D25F2AD0D1 /* EastMoneyAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AC09F95815A485BEEF18697 /* EastMoneyAPI.swift */; };
@@ -61,13 +62,14 @@
 		18DA82720FE1AF06CD8CAEB6 /* WatchlistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistView.swift; sourceTree = "<group>"; };
 		1B5276A685675B378B8792DF /* BullNookApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BullNookApp.swift; sourceTree = "<group>"; };
 		201C084B269E1B019A3A61A9 /* DailyPickView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyPickView.swift; sourceTree = "<group>"; };
-		268F7941FA2C3DCDC7AF9306 /* BullNook.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = BullNook.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		26D63DCAE5432CA1E69B2E3A /* BullnookWidgetExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = BullnookWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		268F7941FA2C3DCDC7AF9306 /* BullNook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BullNook.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		26D63DCAE5432CA1E69B2E3A /* BullnookWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BullnookWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		27BD73F3ED64B0DFD08BE707 /* PickEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickEngine.swift; sourceTree = "<group>"; };
 		2AC09F95815A485BEEF18697 /* EastMoneyAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EastMoneyAPI.swift; sourceTree = "<group>"; };
 		331B3E07F86739DC6D040F55 /* KLineChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KLineChartView.swift; sourceTree = "<group>"; };
 		351D021733D4108F4942C974 /* F10View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = F10View.swift; sourceTree = "<group>"; };
 		37D38864AAFF310C2A477026 /* HistoricalPick.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricalPick.swift; sourceTree = "<group>"; };
+		399001B7D02331DA01DD0894 /* SearchEngineAPI.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SearchEngineAPI.swift; sourceTree = "<group>"; };
 		3D60EBB78E83C61C8EB4922B /* BullnookWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BullnookWidget.swift; sourceTree = "<group>"; };
 		3E05B9F4DF4779DEC3B2DC16 /* SectorData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectorData.swift; sourceTree = "<group>"; };
 		40ABE9BBCD9B752A9EB0EE1A /* TencentAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TencentAPI.swift; sourceTree = "<group>"; };
@@ -157,6 +159,7 @@
 				704770BA4870D3798B37FA36 /* SinaAPI.swift */,
 				5D99A35EF428A91F200E7FA3 /* StockCache.swift */,
 				40ABE9BBCD9B752A9EB0EE1A /* TencentAPI.swift */,
+				399001B7D02331DA01DD0894 /* SearchEngineAPI.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -266,8 +269,6 @@
 			dependencies = (
 			);
 			name = BullNook;
-			packageProductDependencies = (
-			);
 			productName = BullNook;
 			productReference = 268F7941FA2C3DCDC7AF9306 /* BullNook.app */;
 			productType = "com.apple.product-type.application";
@@ -283,8 +284,6 @@
 			dependencies = (
 			);
 			name = BullnookWidgetExtension;
-			packageProductDependencies = (
-			);
 			productName = BullnookWidgetExtension;
 			productReference = 26D63DCAE5432CA1E69B2E3A /* BullnookWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -297,8 +296,6 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
-				TargetAttributes = {
-				};
 			};
 			buildConfigurationList = 49EFC8196D1FEFCA3F7D2233 /* Build configuration list for PBXProject "BullNook" */;
 			developmentRegion = en;
@@ -388,6 +385,7 @@
 				D57FE850B0C757B30EC3B6AD /* WatchlistRow.swift in Sources */,
 				C13F8351232EAF14C68D7CF2 /* WatchlistView.swift in Sources */,
 				C7722D154AEE2C612AC58DEB /* WatchlistViewModel.swift in Sources */,
+				1DC42E407512BD603BC15426 /* SearchEngineAPI.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -399,6 +397,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = RVH4X64K43;
 				INFOPLIST_FILE = Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -417,6 +416,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = RVH4X64K43;
 				INFOPLIST_FILE = Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -488,6 +488,7 @@
 		BBADCA0FC098B7D5B93500D3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = RVH4X64K43;
 				INFOPLIST_FILE = BullnookWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -505,6 +506,7 @@
 		E6A2AEC78B814B7B5D2F2691 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = RVH4X64K43;
 				INFOPLIST_FILE = BullnookWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (

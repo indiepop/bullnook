@@ -17,6 +17,9 @@ struct DailyPickView: View {
             }
             .background(Color.appBackground.ignoresSafeArea())
             .navigationTitle("今日精选")
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .toolbarBackground(Color.appBackground, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
@@ -34,6 +37,9 @@ struct DailyPickView: View {
                 if viewModel == nil {
                     viewModel = DailyPickViewModel(context: context)
                 }
+                Task {
+                    await viewModel?.loadRealTimeQuotes()
+                }
                 if KeychainManager.load() == nil {
                     showSettings = true
                 }
@@ -46,6 +52,12 @@ struct DailyPickView: View {
         ScrollView {
             VStack(spacing: 16) {
                 headerSection(viewModel: viewModel)
+
+                if viewModel.hasRefreshedToday {
+                    refreshedBanner()
+                }
+
+                sectorSummarySection(viewModel: viewModel)
 
                 if viewModel.isLoading && viewModel.picks.isEmpty {
                     LoadingView(message: "正在生成今日推荐...")
@@ -68,7 +80,7 @@ struct DailyPickView: View {
 
     private func headerSection(viewModel: DailyPickViewModel) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text("今日 5 只精选")
+            Text("\(formattedPickDate(viewModel.currentPickDate))精选")
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .foregroundStyle(Color.appTextPrimary)
@@ -77,6 +89,42 @@ struct DailyPickView: View {
                 .foregroundStyle(Color.appTextSecondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func sectorSummarySection(viewModel: DailyPickViewModel) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Image(systemName: "chart.pie")
+                    .foregroundStyle(Color.appAccentGold)
+                Text("昨日板块总体")
+                    .font(.headline)
+                    .foregroundStyle(Color.appTextPrimary)
+                Spacer()
+            }
+
+            Text(viewModel.sectorSummary)
+                .font(.subheadline)
+                .foregroundStyle(Color.appTextSecondary)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding()
+        .background(Color.appCardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
+
+    private func refreshedBanner() -> some View {
+        HStack {
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundStyle(Color.appUp)
+            Text("今日推荐已刷新")
+                .font(.subheadline)
+                .foregroundStyle(Color.appTextPrimary)
+            Spacer()
+        }
+        .padding()
+        .background(Color.appUp.opacity(0.1))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
     private func picksList(viewModel: DailyPickViewModel) -> some View {
@@ -98,21 +146,43 @@ struct DailyPickView: View {
             Image(systemName: "chart.line.uptrend.xyaxis")
                 .font(.system(size: 48))
                 .foregroundStyle(Color.appTextSecondary)
-            Text("今日推荐正在生成中")
-                .font(.headline)
-                .foregroundStyle(Color.appTextPrimary)
-            Text("首次使用或数据过期时会重新抓取公开数据并计算评分。")
-                .font(.caption)
-                .foregroundStyle(Color.appTextSecondary)
-                .multilineTextAlignment(.center)
-            Button("立即生成") {
-                Task {
-                    await viewModel.refreshPicks()
+
+            if let error = viewModel.errorMessage {
+                Text("今日推荐生成失败")
+                    .font(.headline)
+                    .foregroundStyle(Color.appTextPrimary)
+                Text(error)
+                    .font(.caption)
+                    .foregroundStyle(Color.appTextSecondary)
+                    .multilineTextAlignment(.center)
+
+                Button("重试") {
+                    Task {
+                        await viewModel.refreshPicks()
+                    }
                 }
+                .buttonStyle(.borderedProminent)
+                .tint(Color.appAccentGold)
+            } else {
+                Text("今日推荐正在生成中")
+                    .font(.headline)
+                    .foregroundStyle(Color.appTextPrimary)
+                Text("首次使用或数据过期时会自动抓取公开数据并计算评分，请稍候。")
+                    .font(.caption)
+                    .foregroundStyle(Color.appTextSecondary)
+                    .multilineTextAlignment(.center)
             }
-            .buttonStyle(.borderedProminent)
-            .tint(Color.appAccentGold)
         }
         .padding(.top, 60)
+    }
+
+    private func formattedPickDate(_ dateString: String) -> String {
+        guard let date = DateFormatter.yyyyMMdd.date(from: dateString) else {
+            return dateString
+        }
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "zh_CN")
+        formatter.dateFormat = "M月d日"
+        return formatter.string(from: date)
     }
 }

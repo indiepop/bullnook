@@ -11,9 +11,12 @@ class F10Metric {
     var profitGrowth: Double
     var totalMarketCap: Double
     var circulatingMarketCap: Double
+    var industry: String
+    var concepts: String
+    var source: String
     var updatedAt: Date
 
-    init(symbol: String, pe: Double = 0, pb: Double = 0, roe: Double = 0, revenueGrowth: Double = 0, profitGrowth: Double = 0, totalMarketCap: Double = 0, circulatingMarketCap: Double = 0, updatedAt: Date = Date()) {
+    init(symbol: String, pe: Double = 0, pb: Double = 0, roe: Double = 0, revenueGrowth: Double = 0, profitGrowth: Double = 0, totalMarketCap: Double = 0, circulatingMarketCap: Double = 0, industry: String = "", concepts: String = "", source: String = "", updatedAt: Date = Date()) {
         self.symbol = symbol
         self.pe = pe
         self.pb = pb
@@ -22,6 +25,13 @@ class F10Metric {
         self.profitGrowth = profitGrowth
         self.totalMarketCap = totalMarketCap
         self.circulatingMarketCap = circulatingMarketCap
+        self.industry = industry
+        self.concepts = concepts
+        self.source = source
         self.updatedAt = updatedAt
+    }
+
+    var conceptList: [String] {
+        concepts.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
     }
 }

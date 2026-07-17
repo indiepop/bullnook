@@ -49,12 +49,28 @@ final class StockCache {
         let descriptor = FetchDescriptor<HistoricalPick>(
             sortBy: [SortDescriptor(\.date, order: .reverse), SortDescriptor(\.rank)]
         )
-        return (try? context.fetch(descriptor)) ?? []
+        let items = (try? context.fetch(descriptor)) ?? []
+        print("[HistoricalPick] fetched \(items.count) records")
+        return items
     }
 
     func save(historicalPicks: [HistoricalPick]) {
         for pick in historicalPicks {
             context.insert(pick)
+        }
+        do {
+            try context.save()
+            print("[HistoricalPick] saved \(historicalPicks.count) records")
+        } catch {
+            print("[HistoricalPick] save failed: \(error)")
+        }
+    }
+
+    func deleteAllHistoricalPicks(for date: String) {
+        let descriptor = FetchDescriptor<HistoricalPick>(predicate: #Predicate { $0.date == date })
+        guard let items = try? context.fetch(descriptor) else { return }
+        for item in items {
+            context.delete(item)
         }
         try? context.save()
     }
@@ -73,7 +89,14 @@ final class StockCache {
     func save(kline: [KLineData], symbol: String, period: KLinePeriod) {
         let key = klineKey(symbol: symbol, period: period)
 
-        // Remove stale data for the same symbol/period
+        // 清理旧版缓存（未区分周期的 raw symbol）以及同一 symbol+period 的旧数据
+        let legacyDescriptor = FetchDescriptor<KLineData>(predicate: #Predicate { $0.symbol == symbol })
+        if let legacy = try? context.fetch(legacyDescriptor) {
+            for item in legacy {
+                context.delete(item)
+            }
+        }
+
         let descriptor = FetchDescriptor<KLineData>(predicate: #Predicate { $0.symbol == key })
         if let stale = try? context.fetch(descriptor) {
             for item in stale {
@@ -98,27 +121,52 @@ final class StockCache {
         let descriptor = FetchDescriptor<WatchlistItem>(
             sortBy: [SortDescriptor(\.addedAt, order: .reverse)]
         )
-        return (try? context.fetch(descriptor)) ?? []
+        let items = (try? context.fetch(descriptor)) ?? []
+        print("[Watchlist] fetch items: \(items.count), context=\(ObjectIdentifier(context))")
+        return items
     }
 
     func addToWatchlist(stockCode: String, stockName: String, industry: String = "") {
+        print("[Watchlist] add request \(stockCode), context=\(ObjectIdentifier(context))")
+        guard !isInWatchlist(stockCode: stockCode) else {
+            print("[Watchlist] \(stockCode) already in watchlist, skip")
+            return
+        }
+
         let item = WatchlistItem(id: stockCode, stockCode: stockCode, stockName: stockName, industry: industry)
         context.insert(item)
-        try? context.save()
+        do {
+            try context.save()
+            print("[Watchlist] added \(stockCode) \(stockName) ok")
+        } catch {
+            print("[Watchlist] add failed: \(error)")
+        }
     }
 
     func removeFromWatchlist(stockCode: String) {
+        print("[Watchlist] remove request \(stockCode), context=\(ObjectIdentifier(context))")
         let descriptor = FetchDescriptor<WatchlistItem>(predicate: #Predicate { $0.stockCode == stockCode })
-        guard let items = try? context.fetch(descriptor) else { return }
-        for item in items {
-            context.delete(item)
+        do {
+            let items = try context.fetch(descriptor)
+            guard !items.isEmpty else {
+                print("[Watchlist] remove skipped, \(stockCode) not found")
+                return
+            }
+            for item in items {
+                context.delete(item)
+            }
+            try context.save()
+            print("[Watchlist] removed \(stockCode) ok")
+        } catch {
+            print("[Watchlist] remove failed: \(error)")
         }
-        try? context.save()
     }
 
     func isInWatchlist(stockCode: String) -> Bool {
         let descriptor = FetchDescriptor<WatchlistItem>(predicate: #Predicate { $0.stockCode == stockCode })
-        return (try? context.fetchCount(descriptor)) ?? 0 > 0
+        let count = (try? context.fetchCount(descriptor)) ?? 0
+        print("[Watchlist] isInWatchlist \(stockCode): \(count > 0) (count=\(count))")
+        return count > 0
     }
 
     func updateWatchlist(items: [WatchlistItem]) {
@@ -153,6 +201,13 @@ final class StockCache {
     }
 
     func save(f10: F10Metric) {
+        let symbol = f10.symbol
+        let descriptor = FetchDescriptor<F10Metric>(predicate: #Predicate { $0.symbol == symbol })
+        if let existing = try? context.fetch(descriptor) {
+            for item in existing {
+                context.delete(item)
+            }
+        }
         context.insert(f10)
         try? context.save()
     }

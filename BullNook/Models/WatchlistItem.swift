@@ -8,9 +8,9 @@ class WatchlistItem {
     var stockName: String
     var industry: String
     var addedAt: Date
-    var currentPrice: Double
-    var changePercent: Double
-    var lastUpdated: Date
+    var currentPrice: Double = 0
+    var changePercent: Double = 0
+    var lastUpdated: Date = Date()
 
     init(id: String, stockCode: String, stockName: String, industry: String = "", addedAt: Date = Date(), currentPrice: Double = 0, changePercent: Double = 0, lastUpdated: Date = Date()) {
         self.id = id

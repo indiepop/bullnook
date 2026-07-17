@@ -31,3 +31,18 @@ class KLineData {
         self.turnover = turnover
     }
 }
+
+extension KLineData {
+    /// 将 `date` 字段解析为 `Date`，兼容 "yyyy-MM-dd" 与 "yyyyMMdd" 两种格式。
+    var plottedDate: Date? {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "zh_CN")
+        for format in ["yyyy-MM-dd", "yyyyMMdd"] {
+            formatter.dateFormat = format
+            if let date = formatter.date(from: date) {
+                return date
+            }
+        }
+        return nil
+    }
+}

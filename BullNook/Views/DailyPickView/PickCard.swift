@@ -30,7 +30,7 @@ struct PickCard: View {
                     Text(String(format: "%.2f", pick.currentPrice))
                         .font(.headline)
                         .foregroundStyle(Color.appTextPrimary)
-                    Text(String(format: "%.2f%%", pick.changePercent))
+                    Text(Color.formatChangePercent(pick.changePercent))
                         .font(.caption)
                         .foregroundStyle(pick.changePercent >= 0 ? Color.appUp : Color.appDown)
                 }

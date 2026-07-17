@@ -17,19 +17,45 @@ struct AnalysisView: View {
             Divider()
                 .background(Color.appTertiary)
 
-            Text("入选分析")
+            Text("智能投研分析")
                 .font(.headline)
                 .foregroundStyle(Color.appTextPrimary)
 
-            Text(pick.analysis.isEmpty ? pick.reasonSummary : pick.analysis)
-                .font(.body)
-                .foregroundStyle(Color.appTextSecondary)
+            if pick.analysis.isEmpty || pick.analysis.contains("规则摘要") || pick.analysis.contains("请在设置中配置") {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(pick.analysis.isEmpty ? pick.reasonSummary : pick.analysis)
+                        .font(.body)
+                        .foregroundStyle(Color.appTextSecondary)
+                    Text("在设置中配置 LLM API Key 后可获取更详尽透彻的智能分析。")
+                        .font(.caption)
+                        .foregroundStyle(Color.appTextSecondary)
+                }
+            } else {
+                analysisContent(text: pick.analysis)
+                    .font(.body)
+                    .foregroundStyle(Color.appTextSecondary)
+                    .lineSpacing(6)
+            }
 
             DisclaimerView()
         }
         .padding()
         .background(Color.appCardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
+
+    @ViewBuilder
+    private func analysisContent(text: String) -> some View {
+        if let attributed = try? AttributedString(
+            markdown: text,
+            options: AttributedString.MarkdownParsingOptions(
+                interpretedSyntax: .inlineOnlyPreservingWhitespace
+            )
+        ) {
+            Text(attributed)
+        } else {
+            Text(text)
+        }
     }
 
     private func scoreRow(title: String, score: Double) -> some View {
