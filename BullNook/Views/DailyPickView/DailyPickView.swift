@@ -116,7 +116,14 @@ struct DailyPickView: View {
                 } label: {
                     HStack {
                         Image(systemName: "arrow.clockwise")
-                        Text("更新板块数据")
+                            .rotationEffect(.degrees(viewModel.isRefreshingSectorSummary ? 360 : 0))
+                            .animation(
+                                viewModel.isRefreshingSectorSummary
+                                    ? .linear(duration: 1).repeatForever(autoreverses: false)
+                                    : .default,
+                                value: viewModel.isRefreshingSectorSummary
+                            )
+                        Text(viewModel.isRefreshingSectorSummary ? "更新中..." : "更新板块数据")
                     }
                     .font(.subheadline)
                     .fontWeight(.semibold)
@@ -124,6 +131,7 @@ struct DailyPickView: View {
                 .buttonStyle(.borderedProminent)
                 .tint(Color.appAccentGold)
                 .padding(.top, 4)
+                .disabled(viewModel.isRefreshingSectorSummary)
             }
         }
         .padding()

@@ -11,6 +11,7 @@ final class DailyPickViewModel {
 
     var picks: [DailyPick] = []
     var isLoading = false
+    var isRefreshingSectorSummary = false
     var errorMessage: String?
     var showAPIKeyAlert = false
     var sectorSummary: String = ""
@@ -166,11 +167,11 @@ final class DailyPickViewModel {
     }
 
     func refreshSectorSummary() async {
-        guard !isLoading else { return }
+        guard !isRefreshingSectorSummary else { return }
 
-        isLoading = true
+        isRefreshingSectorSummary = true
         errorMessage = nil
-        defer { isLoading = false }
+        defer { isRefreshingSectorSummary = false }
 
         let today = DateFormatter.yyyyMMdd.string(from: Date())
         let sectors = await EastMoneyAPI.sectorList()
