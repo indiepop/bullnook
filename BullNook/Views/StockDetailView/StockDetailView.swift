@@ -174,7 +174,7 @@ struct StockDetailView: View {
         } else if selectedTab == 1 {
             F10View(f10: viewModel.f10)
         } else {
-            AnalysisView(pick: pick)
+            AnalysisView(pick: pick, isLLMConfigured: viewModel.isLLMConfigured, isAnalysisLoading: viewModel.isAnalysisLoading)
         }
     }
 }

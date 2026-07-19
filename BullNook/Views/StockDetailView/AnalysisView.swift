@@ -2,6 +2,8 @@ import SwiftUI
 
 struct AnalysisView: View {
     let pick: DailyPick
+    let isLLMConfigured: Bool
+    let isAnalysisLoading: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -21,14 +23,29 @@ struct AnalysisView: View {
                 .font(.headline)
                 .foregroundStyle(Color.appTextPrimary)
 
-            if pick.analysis.isEmpty || pick.analysis.contains("规则摘要") || pick.analysis.contains("请在设置中配置") {
+            if isAnalysisLoading {
+                HStack(spacing: 8) {
+                    ProgressView()
+                        .scaleEffect(0.8)
+                    Text("正在生成智能分析...")
+                        .font(.body)
+                        .foregroundStyle(Color.appTextSecondary)
+                }
+                .padding(.vertical, 8)
+            } else if pick.analysis.isEmpty || pick.analysis.contains("规则摘要") {
                 VStack(alignment: .leading, spacing: 8) {
                     Text(pick.analysis.isEmpty ? pick.reasonSummary : pick.analysis)
                         .font(.body)
                         .foregroundStyle(Color.appTextSecondary)
-                    Text("在设置中配置 LLM API Key 后可获取更详尽透彻的智能分析。")
-                        .font(.caption)
-                        .foregroundStyle(Color.appTextSecondary)
+                    if isLLMConfigured {
+                        Text("已触发智能分析，请稍后回来查看结果。")
+                            .font(.caption)
+                            .foregroundStyle(Color.appTextSecondary)
+                    } else {
+                        Text("在设置中配置 LLM API Key 后可获取更详尽透彻的智能分析。")
+                            .font(.caption)
+                            .foregroundStyle(Color.appTextSecondary)
+                    }
                 }
             } else {
                 analysisContent(text: pick.analysis)

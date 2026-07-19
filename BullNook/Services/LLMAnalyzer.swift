@@ -89,7 +89,7 @@ actor LLMAnalyzer {
 
     private func fallbackAnalysis(context: LLMAnalysisContext) -> String {
         let pick = context.pick
-        return "【规则摘要】\(pick.stockName)(\(pick.stockCode)) 今日入选原因：\(pick.reasonSummary)。四维度得分：板块热度 \(String(format: "%.1f", pick.sectorScore))，龙虎榜 \(String(format: "%.1f", pick.lhbScore))，走势 \(String(format: "%.1f", pick.trendScore))，消息 \(String(format: "%.1f", pick.newsScore))。请在设置中配置 LLM API Key 以获取智能分析。"
+        return "【规则摘要】\(pick.stockName)(\(pick.stockCode)) 今日入选原因：\(pick.reasonSummary)。四维度得分：板块热度 \(String(format: "%.1f", pick.sectorScore))，龙虎榜 \(String(format: "%.1f", pick.lhbScore))，走势 \(String(format: "%.1f", pick.trendScore))，消息 \(String(format: "%.1f", pick.newsScore))。当前展示为规则摘要。"
     }
 
     private func buildPrompt(context: LLMAnalysisContext) -> String {

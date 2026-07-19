@@ -5,6 +5,7 @@ import SwiftData
 @MainActor
 final class StockDetailViewModel {
     private let cache: StockCache
+    private let llmAnalyzer = LLMAnalyzer()
     let pick: DailyPick
 
     var kline: [KLineData] = []
@@ -12,6 +13,8 @@ final class StockDetailViewModel {
     var f10: F10Metric?
     var isInWatchlist = false
     var isLoading = false
+    var isLLMConfigured = false
+    var isAnalysisLoading = false
 
     init(pick: DailyPick, context: ModelContext) {
         self.pick = pick
@@ -26,7 +29,68 @@ final class StockDetailViewModel {
         await loadKLine(symbol: symbol)
         await loadF10(symbol: symbol)
         isInWatchlist = cache.isInWatchlist(stockCode: pick.stockCode)
-        print("[Watchlist] StockDetail loadData, isInWatchlist=\(isInWatchlist)")
+        isLLMConfigured = KeychainManager.load()?.apiKey.isEmpty == false
+        print("[Watchlist] StockDetail loadData, isInWatchlist=\(isInWatchlist), isLLMConfigured=\(isLLMConfigured)")
+
+        // 如果已配置 LLM 但分析仍是占位/失败摘要，自动补做一次 LLM 分析
+        await enrichAnalysisIfNeeded(symbol: symbol)
+    }
+
+    private func enrichAnalysisIfNeeded(symbol: String) async {
+        guard let config = KeychainManager.load(), !config.apiKey.isEmpty else {
+            print("[LLM] StockDetail skip enrichment, no config")
+            return
+        }
+        guard pick.analysis.isEmpty || pick.analysis.contains("规则摘要") else {
+            print("[LLM] StockDetail analysis already enriched")
+            return
+        }
+
+        isAnalysisLoading = true
+        defer { isAnalysisLoading = false }
+
+        print("[LLM] StockDetail enriching analysis for \(pick.stockCode)")
+        let quotes = await SinaAPI.realTimeQuotes(symbols: [symbol])
+        let quote = quotes.first
+        let news = await EastMoneyAPI.stockNews(symbol: symbol)
+
+        let today = DateFormatter.yyyyMMdd.string(from: Date())
+        let sectors = cache.sectors(for: today)
+        let sectorSummary = sectors.isEmpty
+            ? "板块数据暂不可用。"
+            : generateSectorSummary(sectors: sectors)
+
+        let context = LLMAnalysisContext(
+            pick: pick,
+            allPicks: [pick],
+            quote: quote,
+            f10: f10,
+            kline: kline,
+            news: news,
+            sectorSummary: sectorSummary
+        )
+
+        let analysis = await llmAnalyzer.analyze(context: context, config: config)
+        pick.analysis = analysis
+        cache.save(dailyPicks: [pick])
+        print("[LLM] StockDetail enriched analysis for \(pick.stockCode): \(analysis.prefix(50))...")
+    }
+
+    private func generateSectorSummary(sectors: [SectorData]) -> String {
+        let sorted = sectors.sorted { $0.changePercent > $1.changePercent }
+        let topRisers = Array(sorted.prefix(3))
+        let topFallers = Array(sorted.suffix(3).reversed())
+        let avgChange = sectors.reduce(0) { $0 + $1.changePercent } / Double(sectors.count)
+        let upCount = sectors.filter { $0.changePercent > 0 }.count
+        let downCount = sectors.filter { $0.changePercent < 0 }.count
+
+        var parts: [String] = []
+        parts.append("沪深两市共 \(sectors.count) 个板块，上涨 \(upCount) 个、下跌 \(downCount) 个，平均涨跌 \(String(format: "%.2f", avgChange))%。")
+        let riserNames = topRisers.map { "\($0.name)(\(String(format: "+%.2f", $0.changePercent))%)" }.joined(separator: "、")
+        parts.append("涨幅前三：\(riserNames)。")
+        let fallerNames = topFallers.map { "\($0.name)(\(String(format: "%.2f", $0.changePercent))%)" }.joined(separator: "、")
+        parts.append("跌幅前三：\(fallerNames)。")
+        return parts.joined(separator: "")
     }
 
     private func loadKLine(symbol: String) async {
