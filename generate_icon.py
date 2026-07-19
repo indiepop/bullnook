@@ -233,49 +233,49 @@ def draw_bull(draw: ImageDraw.ImageDraw) -> None:
     draw.polygon([(40, 390), (5, 335), (65, 355)], fill=OUTLINE)
     draw.polygon([(43, 388), (17, 345), (59, 360)], fill=RED)
 
-    # Main body silhouette - tough angular charging bull
+    # Main body silhouette - muscular charging bull with big hump
     silhouette = [
-        (965, 530),  # nose tip
-        (985, 485),  # nose top
-        (955, 410),  # forehead
-        (890, 370),  # top front head
-        (800, 375),  # top back head
-        (730, 420),  # neck top
-        (670, 360),  # shoulder hump (high)
-        (560, 345),  # withers
-        (430, 370),  # back
-        (290, 410),  # mid back
-        (195, 455),  # rump top
-        (155, 550),  # rump back
-        (155, 690),  # rump bottom
-        (210, 690),  # back leg top front
-        (210, 790),  # back leg knee
-        (195, 960),  # back hoof front
-        (275, 960),  # back hoof back
-        (290, 790),  # back leg knee back
-        (290, 710),  # back leg top back
-        (380, 740),  # belly back
-        (510, 760),  # belly mid
-        (625, 745),  # belly front
-        (645, 790),  # front leg back knee
-        (645, 960),  # back front hoof
-        (720, 960),  # front front hoof
-        (720, 790),  # front leg front knee
-        (730, 720),  # front leg top
-        (770, 680),  # chest bottom
-        (835, 600),  # throat
-        (890, 560),  # jaw corner
-        (965, 560),  # snout bottom
+        (940, 520),  # nose tip (narrower)
+        (965, 475),  # nose top
+        (955, 400),  # forehead
+        (900, 350),  # top front head
+        (820, 345),  # top back head
+        (760, 380),  # neck top
+        (700, 290),  # shoulder hump (much higher)
+        (560, 325),  # withers
+        (420, 360),  # back
+        (260, 410),  # mid back
+        (160, 480),  # rump top (smaller)
+        (130, 580),  # rump back
+        (140, 700),  # rump bottom
+        (205, 700),  # back leg top front
+        (200, 790),  # back leg knee
+        (190, 960),  # back hoof front
+        (270, 960),  # back hoof back
+        (285, 790),  # back leg knee back
+        (295, 720),  # back leg top back
+        (390, 760),  # belly back
+        (530, 775),  # belly mid
+        (640, 755),  # belly front
+        (660, 800),  # front leg back knee
+        (660, 965),  # back front hoof
+        (735, 965),  # front front hoof
+        (735, 800),  # front leg front knee
+        (745, 730),  # front leg top
+        (785, 670),  # chest bottom
+        (840, 590),  # throat
+        (895, 545),  # jaw corner
+        (940, 545),  # snout bottom
     ]
     draw_polygon_with_outline(draw, silhouette, fill=RED, outline_width=12)
 
     # Dewlap / throat skin (bull trait) - rounded hanging flap
     draw.polygon(
-        [(795, 595), (875, 630), (840, 705), (775, 675), (745, 630)],
+        [(780, 570), (860, 605), (825, 680), (760, 650), (730, 605)],
         fill=OUTLINE,
     )
     draw.polygon(
-        [(802, 605), (865, 632), (835, 690), (782, 665), (758, 632)],
+        [(787, 580), (850, 607), (820, 665), (767, 640), (743, 607)],
         fill=RED_DARK,
     )
 
@@ -298,22 +298,22 @@ def draw_bull(draw: ImageDraw.ImageDraw) -> None:
             fill=OUTLINE,
         )
 
-    # Snout / muzzle - broader and shorter
-    draw.ellipse([920, 515, 990, 590], fill=OUTLINE)
-    draw.ellipse([925, 520, 985, 585], fill=(255, 150, 150))
-    draw.ellipse([955, 540, 980, 565], fill=OUTLINE)
-    draw.ellipse([958, 543, 977, 562], fill=(60, 20, 20))
+    # Snout / muzzle - red bull nose, small and dark
+    draw.ellipse([905, 515, 965, 575], fill=OUTLINE)
+    draw.ellipse([910, 520, 960, 570], fill=RED)
+    # Single dark bull nose
+    draw.ellipse([930, 540, 955, 565], fill=(35, 8, 8))
 
     # Ear
-    draw.polygon([(800, 400), (845, 335), (875, 410)], fill=OUTLINE)
-    draw.polygon([(808, 402), (842, 347), (868, 408)], fill=RED_LIGHT)
+    draw.polygon([(790, 370), (835, 305), (865, 380)], fill=OUTLINE)
+    draw.polygon([(798, 372), (832, 317), (858, 378)], fill=RED_LIGHT)
 
     # Horns - thicker and more bull-like
-    draw_horn(draw, (850, 375), (1025, 255), (1110, 360), 58, 14)
-    draw_horn(draw, (785, 390), (935, 270), (1025, 345), 46, 12)
+    draw_horn(draw, (835, 355), (1005, 235), (1095, 340), 58, 14)
+    draw_horn(draw, (775, 370), (925, 250), (1015, 325), 46, 12)
 
     # Eye - larger and angrier
-    eye_cx, eye_cy = 910, 425
+    eye_cx, eye_cy = 900, 405
     draw.ellipse([eye_cx - 26, eye_cy - 20, eye_cx + 26, eye_cy + 20], fill=OUTLINE)
     draw.ellipse([eye_cx - 19, eye_cy - 13, eye_cx + 19, eye_cy + 13], fill=WHITE)
     draw.ellipse([eye_cx + 3, eye_cy - 7, eye_cx + 17, eye_cy + 7], fill=OUTLINE)
