@@ -5,19 +5,34 @@ struct AnalysisView: View {
     let isLLMConfigured: Bool
     let isAnalysisLoading: Bool
 
+    private var topDimensions: [(String, Double)] {
+        let all = [
+            ("板块热度", pick.sectorScore),
+            ("龙虎榜资金", pick.lhbScore),
+            ("个股走势", pick.trendScore),
+            ("消息链", pick.newsScore)
+        ]
+        let sorted = all.sorted { $0.1 > $1.1 }
+        // 只展示得分最高的 1–2 个维度，让每个股票的亮点不同；如果最高分和次高分差距很小，展示前 2
+        let top = Array(sorted.prefix(2))
+        // 过滤掉全是 0 的 watchlist 占位数据
+        return top.filter { $0.1 > 0 }
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("四维度得分")
-                .font(.headline)
-                .foregroundStyle(Color.appTextPrimary)
+            if !topDimensions.isEmpty {
+                Text("亮点维度")
+                    .font(.headline)
+                    .foregroundStyle(Color.appTextPrimary)
 
-            scoreRow(title: "板块热度", score: pick.sectorScore)
-            scoreRow(title: "龙虎榜资金", score: pick.lhbScore)
-            scoreRow(title: "个股走势", score: pick.trendScore)
-            scoreRow(title: "消息链", score: pick.newsScore)
+                ForEach(topDimensions, id: \.0) { title, score in
+                    scoreRow(title: title, score: score)
+                }
 
-            Divider()
-                .background(Color.appTertiary)
+                Divider()
+                    .background(Color.appTertiary)
+            }
 
             Text("智能投研分析")
                 .font(.headline)
