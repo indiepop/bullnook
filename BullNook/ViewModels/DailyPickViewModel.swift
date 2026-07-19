@@ -35,8 +35,8 @@ final class DailyPickViewModel {
     }
 
     var hasSectorData: Bool {
-        let today = DateFormatter.yyyyMMdd.string(from: Date())
-        return !cache.sectors(for: today).isEmpty
+        let effectiveDate = effectiveTradingDate(for: Date())
+        return !cache.sectors(for: effectiveDate).isEmpty
     }
 
     init(context: ModelContext) {
@@ -46,55 +46,31 @@ final class DailyPickViewModel {
     }
 
     func loadCachedPicks() {
-        let today = Date()
+        let effectiveDate = effectiveTradingDate(for: Date())
 
-        // 非交易日沿用最近交易日的推荐，不重新生成
-        if !isTradingDay(today) {
-            if loadPreviousTradingDaysPicksIfAvailable(reference: today) {
-                return
-            }
-        }
-
-        // 优先加载当日已生成的推荐，固定展示
-        if loadTodaysPicksIfAvailable() {
+        // 优先加载有效交易日（今日或最近交易日）已生成的推荐，固定展示
+        if loadPicksIfAvailable(for: effectiveDate) {
             return
         }
 
-        // 当日无数据时自动后台生成，用户不需要手动点“立即生成”
+        // 有效交易日无数据时自动后台生成
         Task {
             await refreshPicks()
         }
     }
 
     @discardableResult
-    private func loadTodaysPicksIfAvailable() -> Bool {
-        let today = DateFormatter.yyyyMMdd.string(from: Date())
-        let cached = cache.dailyPicks(for: today)
+    private func loadPicksIfAvailable(for date: String) -> Bool {
+        let cached = cache.dailyPicks(for: date)
         guard !cached.isEmpty else { return false }
 
         picks = cached
-        if let latest = cached.map({ $0.generatedAt }).max(), Calendar.current.isDateInToday(latest) {
+        if let latest = cached.map({ $0.generatedAt }).max() {
             lastRefreshedAt = latest
         }
 
-        let sectors = cache.sectors(for: today)
-        sectorSummary = generateSectorSummary(sectors: sectors, date: today)
-
-        Task {
-            await loadRealTimeQuotes()
-        }
-        return true
-    }
-
-    @discardableResult
-    private func loadPreviousTradingDaysPicksIfAvailable(reference: Date) -> Bool {
-        guard let previousDate = previousTradingDay(before: reference) else { return false }
-        let cached = cache.dailyPicks(for: previousDate)
-        guard !cached.isEmpty else { return false }
-
-        picks = cached
-        let sectors = cache.sectors(for: previousDate)
-        sectorSummary = generateSectorSummary(sectors: sectors, date: previousDate)
+        let sectors = cache.sectors(for: date)
+        sectorSummary = generateSectorSummary(sectors: sectors, date: date)
 
         Task {
             await loadRealTimeQuotes()
@@ -105,20 +81,11 @@ final class DailyPickViewModel {
     func refreshPicks() async {
         guard !isLoading else { return }
 
-        let today = Date()
-        let todayString = DateFormatter.yyyyMMdd.string(from: today)
+        let effectiveDate = effectiveTradingDate(for: Date())
 
-        // 非交易日只沿用最近交易日数据并刷新行情，不重新生成，也不记录历史
-        if !isTradingDay(today) {
-            if loadPreviousTradingDaysPicksIfAvailable(reference: today) {
-                await loadRealTimeQuotes()
-            }
-            return
-        }
-
-        // 今日推荐已存在时只刷新实时行情，不再重新生成，保证每天结果固定
-        if !cache.dailyPicks(for: todayString).isEmpty {
-            loadTodaysPicksIfAvailable()
+        // 有效交易日推荐已存在时只刷新实时行情，不再重新生成
+        if !cache.dailyPicks(for: effectiveDate).isEmpty {
+            loadPicksIfAvailable(for: effectiveDate)
             await loadRealTimeQuotes()
             return
         }
@@ -137,7 +104,7 @@ final class DailyPickViewModel {
         var klines: [String: [KLineData]] = [:]
         var news: [String: [StockNews]] = [:]
         for stock in candidateStocks {
-            async let kline = EastMoneyAPI.kline(symbol: stock.symbol, period: .daily, start: "20240101", end: todayString)
+            async let kline = EastMoneyAPI.kline(symbol: stock.symbol, period: .daily, start: "20240101", end: effectiveDate)
             async let stockNews = EastMoneyAPI.stockNews(symbol: stock.symbol)
             let (k, n) = await (kline, stockNews)
             klines[stock.symbol] = k
@@ -147,11 +114,11 @@ final class DailyPickViewModel {
 
         // 2. 本地评分生成 Top5
         let inputs = PickInputs(stocks: candidateStocks, klines: klines, sectors: sectors, dragonTigers: dragonTigers, news: news)
-        var generated = await pickEngine.generatePicks(inputs: inputs, date: todayString)
+        var generated = await pickEngine.generatePicks(inputs: inputs, date: effectiveDate)
 
         guard !generated.isEmpty else {
             errorMessage = "未能生成今日推荐，请检查网络后下拉重试。"
-            print("[DailyPick] generatePicks returned empty for \(todayString)")
+            print("[DailyPick] generatePicks returned empty for \(effectiveDate)")
             return
         }
 
@@ -171,15 +138,15 @@ final class DailyPickViewModel {
             }
         }
 
-        let sectorSummary = generateSectorSummary(sectors: sectors, date: todayString)
+        let sectorSummary = generateSectorSummary(sectors: sectors, date: effectiveDate)
 
         // 4. 先保存并展示，让用户立即看到今日推荐
-        cache.deleteAllDailyPicks(for: todayString)
+        cache.deleteAllDailyPicks(for: effectiveDate)
         cache.save(dailyPicks: generated)
         cache.save(sectors: sectors)
 
         let historical = generated.map { HistoricalPick(from: $0, performanceSincePick: 0, pickPrice: $0.currentPrice, currentPrice: $0.currentPrice) }
-        cache.deleteAllHistoricalPicks(for: todayString)
+        cache.deleteAllHistoricalPicks(for: effectiveDate)
         cache.save(historicalPicks: historical)
 
         self.sectorSummary = sectorSummary
@@ -195,7 +162,7 @@ final class DailyPickViewModel {
                 klines: klines,
                 news: news,
                 sectorSummary: sectorSummary,
-                date: todayString
+                date: effectiveDate
             )
         }
     }
@@ -207,19 +174,19 @@ final class DailyPickViewModel {
         errorMessage = nil
         defer { isRefreshingSectorSummary = false }
 
-        let today = DateFormatter.yyyyMMdd.string(from: Date())
+        let effectiveDate = effectiveTradingDate(for: Date())
         let sectors = await EastMoneyAPI.sectorList()
 
         guard !sectors.isEmpty else {
             errorMessage = "板块数据获取失败，请检查网络后重试。"
-            print("[DailyPick] sectorList returned empty for \(today)")
+            print("[DailyPick] sectorList returned empty for \(effectiveDate)")
             return
         }
 
         cache.save(sectors: sectors)
-        sectorSummary = generateSectorSummary(sectors: sectors, date: today)
+        sectorSummary = generateSectorSummary(sectors: sectors, date: effectiveDate)
         lastRefreshedAt = Date()
-        print("[DailyPick] sector summary refreshed for \(today)")
+        print("[DailyPick] sector summary refreshed for \(effectiveDate)")
     }
 
     private func enrichPicksWithLLM(
@@ -344,6 +311,13 @@ final class DailyPickViewModel {
             Stock(id: "600276", symbol: "sh600276", name: "恒瑞医药", industry: "医药", marketCap: 300_000_000_000)
         ]
     }
+    private func effectiveTradingDate(for date: Date) -> String {
+        if isTradingDay(date) {
+            return DateFormatter.yyyyMMdd.string(from: date)
+        }
+        return previousTradingDay(before: date) ?? DateFormatter.yyyyMMdd.string(from: date)
+    }
+
     private func isTradingDay(_ date: Date) -> Bool {
         let weekday = Calendar.current.component(.weekday, from: date)
         // 1 = 周日，7 = 周六；A股周末休市

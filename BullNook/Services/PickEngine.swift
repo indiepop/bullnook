@@ -31,7 +31,8 @@ actor PickEngine {
             let trendScore = scoreTrend(kline: kline)
             let newsScore = scoreNews(news: stockNews)
 
-            let total = (sectorResult.score + lhbScore + trendScore + newsScore) / 4.0
+            // 短线操作更重视龙虎榜资金，权重：龙虎榜 45% > 走势 25% > 板块/消息各 15%
+            let total = sectorResult.score * 0.15 + lhbScore * 0.45 + trendScore * 0.25 + newsScore * 0.15
             let reason = reasonSummary(
                 stock: stock,
                 sectorScore: sectorResult.score,
@@ -155,11 +156,11 @@ actor PickEngine {
     ) -> String {
         var highlights: [String] = []
 
-        // 板块维度：只有真正明显占优才写入理由
-        if sectorScore >= 70, let sector = matchedSector {
-            let sign = sector.changePercent >= 0 ? "+" : ""
-            let changeStr = String(format: "%.2f", sector.changePercent)
-            highlights.append("\(stock.industry)板块热度居前（\(sign)\(changeStr)%）")
+        // 龙虎榜维度（短线核心）
+        if lhbScore >= 55, !dragonTigers.isEmpty {
+            let netBuy = dragonTigers.reduce(0) { $0 + $1.netBuyAmount }
+            let netBuyStr = formatAmount(netBuy)
+            highlights.append("龙虎榜资金净流入\(netBuyStr)，主力关注度高")
         }
 
         // 走势维度
@@ -177,29 +178,33 @@ actor PickEngine {
             }
         }
 
+        // 板块维度：只有真正明显占优才写入理由
+        if sectorScore >= 70, let sector = matchedSector {
+            let sign = sector.changePercent >= 0 ? "+" : ""
+            let changeStr = String(format: "%.2f", sector.changePercent)
+            highlights.append("\(stock.industry)板块热度居前（\(sign)\(changeStr)%）")
+        }
+
         // 消息维度
         if newsScore >= 70, newsCount > 0 {
             highlights.append("消息链活跃，共有 \(newsCount) 条相关资讯")
         }
 
-        // 龙虎榜维度
-        if lhbScore >= 70, !dragonTigers.isEmpty {
-            let netBuy = dragonTigers.reduce(0) { $0 + $1.netBuyAmount }
-            let netBuyStr = formatAmount(netBuy)
-            highlights.append("龙虎榜资金净流入 \(netBuyStr)，主力关注度高")
-        }
-
         // 如果没有任何维度特别突出，取最高分维度做差异化描述
         if highlights.isEmpty {
             let scores = [
-                ("板块热度", sectorScore, "板块"),
                 ("龙虎榜资金", lhbScore, "资金"),
                 ("个股走势", trendScore, "走势"),
+                ("板块热度", sectorScore, "板块"),
                 ("消息链", newsScore, "消息")
             ]
             let top = scores.max { $0.1 < $1.1 } ?? scores[0]
 
             switch top.2 {
+            case "资金":
+                highlights.append("龙虎榜资金维度评分相对占优，短线值得关注")
+            case "走势":
+                highlights.append("技术面走势维度评分相对占优")
             case "板块":
                 if let sector = matchedSector {
                     let sign = sector.changePercent >= 0 ? "+" : ""
@@ -208,12 +213,8 @@ actor PickEngine {
                 } else {
                     highlights.append("\(stock.industry)板块维度评分相对占优")
                 }
-            case "走势":
-                highlights.append("技术面走势维度评分相对占优")
             case "消息":
                 highlights.append("消息链维度有一定活跃度")
-            case "资金":
-                highlights.append("龙虎榜资金维度评分相对占优")
             default:
                 highlights.append("\(top.0)维度评分相对占优")
             }
