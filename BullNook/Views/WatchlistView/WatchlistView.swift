@@ -59,9 +59,12 @@ struct WatchlistView: View {
             }
 
             ForEach(items) { item in
-                WatchlistRow(item: item)
-                    .listRowBackground(Color.clear)
-                    .listRowSeparator(.hidden)
+                NavigationLink(value: item) {
+                    WatchlistRow(item: item)
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
+                }
+                .buttonStyle(.plain)
             }
             .onDelete { indexSet in
                 for index in indexSet {
@@ -80,6 +83,9 @@ struct WatchlistView: View {
         .refreshable {
             loadItems()
             await refreshQuotes()
+        }
+        .navigationDestination(for: WatchlistItem.self) { item in
+            StockDetailView(pick: dailyPick(from: item))
         }
     }
 
@@ -139,4 +145,25 @@ private func codeToSymbol(_ code: String) -> String {
     if code.hasPrefix("6") { return "sh\(code)" }
     if code.hasPrefix("0") || code.hasPrefix("3") { return "sz\(code)" }
     return code
+}
+
+private func dailyPick(from item: WatchlistItem) -> DailyPick {
+    DailyPick(
+        id: "watchlist_\(item.stockCode)",
+        date: DateFormatter.yyyyMMdd.string(from: item.addedAt),
+        rank: 0,
+        stockCode: item.stockCode,
+        stockName: item.stockName,
+        industry: item.industry,
+        score: 0,
+        reasonSummary: "该股票来自自选股，暂无每日精选评分与入选分析。",
+        sectorScore: 0,
+        lhbScore: 0,
+        trendScore: 0,
+        newsScore: 0,
+        analysis: "",
+        generatedAt: item.addedAt,
+        currentPrice: item.currentPrice,
+        changePercent: item.changePercent
+    )
 }
