@@ -46,6 +46,15 @@ final class DailyPickViewModel {
     }
 
     func loadCachedPicks() {
+        let today = Date()
+
+        // 非交易日沿用最近交易日的推荐，不重新生成
+        if !isTradingDay(today) {
+            if loadPreviousTradingDaysPicksIfAvailable(reference: today) {
+                return
+            }
+        }
+
         // 优先加载当日已生成的推荐，固定展示
         if loadTodaysPicksIfAvailable() {
             return
@@ -77,13 +86,38 @@ final class DailyPickViewModel {
         return true
     }
 
+    @discardableResult
+    private func loadPreviousTradingDaysPicksIfAvailable(reference: Date) -> Bool {
+        guard let previousDate = previousTradingDay(before: reference) else { return false }
+        let cached = cache.dailyPicks(for: previousDate)
+        guard !cached.isEmpty else { return false }
+
+        picks = cached
+        let sectors = cache.sectors(for: previousDate)
+        sectorSummary = generateSectorSummary(sectors: sectors, date: previousDate)
+
+        Task {
+            await loadRealTimeQuotes()
+        }
+        return true
+    }
+
     func refreshPicks() async {
         guard !isLoading else { return }
 
-        let today = DateFormatter.yyyyMMdd.string(from: Date())
+        let today = Date()
+        let todayString = DateFormatter.yyyyMMdd.string(from: today)
+
+        // 非交易日只沿用最近交易日数据并刷新行情，不重新生成，也不记录历史
+        if !isTradingDay(today) {
+            if loadPreviousTradingDaysPicksIfAvailable(reference: today) {
+                await loadRealTimeQuotes()
+            }
+            return
+        }
 
         // 今日推荐已存在时只刷新实时行情，不再重新生成，保证每天结果固定
-        if !cache.dailyPicks(for: today).isEmpty {
+        if !cache.dailyPicks(for: todayString).isEmpty {
             loadTodaysPicksIfAvailable()
             await loadRealTimeQuotes()
             return
@@ -103,7 +137,7 @@ final class DailyPickViewModel {
         var klines: [String: [KLineData]] = [:]
         var news: [String: [StockNews]] = [:]
         for stock in candidateStocks {
-            async let kline = EastMoneyAPI.kline(symbol: stock.symbol, period: .daily, start: "20240101", end: today)
+            async let kline = EastMoneyAPI.kline(symbol: stock.symbol, period: .daily, start: "20240101", end: todayString)
             async let stockNews = EastMoneyAPI.stockNews(symbol: stock.symbol)
             let (k, n) = await (kline, stockNews)
             klines[stock.symbol] = k
@@ -113,11 +147,11 @@ final class DailyPickViewModel {
 
         // 2. 本地评分生成 Top5
         let inputs = PickInputs(stocks: candidateStocks, klines: klines, sectors: sectors, dragonTigers: dragonTigers, news: news)
-        var generated = await pickEngine.generatePicks(inputs: inputs, date: today)
+        var generated = await pickEngine.generatePicks(inputs: inputs, date: todayString)
 
         guard !generated.isEmpty else {
             errorMessage = "未能生成今日推荐，请检查网络后下拉重试。"
-            print("[DailyPick] generatePicks returned empty for \(today)")
+            print("[DailyPick] generatePicks returned empty for \(todayString)")
             return
         }
 
@@ -137,15 +171,15 @@ final class DailyPickViewModel {
             }
         }
 
-        let sectorSummary = generateSectorSummary(sectors: sectors, date: today)
+        let sectorSummary = generateSectorSummary(sectors: sectors, date: todayString)
 
         // 4. 先保存并展示，让用户立即看到今日推荐
-        cache.deleteAllDailyPicks(for: today)
+        cache.deleteAllDailyPicks(for: todayString)
         cache.save(dailyPicks: generated)
         cache.save(sectors: sectors)
 
         let historical = generated.map { HistoricalPick(from: $0, performanceSincePick: 0, pickPrice: $0.currentPrice, currentPrice: $0.currentPrice) }
-        cache.deleteAllHistoricalPicks(for: today)
+        cache.deleteAllHistoricalPicks(for: todayString)
         cache.save(historicalPicks: historical)
 
         self.sectorSummary = sectorSummary
@@ -161,7 +195,7 @@ final class DailyPickViewModel {
                 klines: klines,
                 news: news,
                 sectorSummary: sectorSummary,
-                date: today
+                date: todayString
             )
         }
     }
@@ -309,6 +343,24 @@ final class DailyPickViewModel {
             Stock(id: "002475", symbol: "sz002475", name: "立讯精密", industry: "电子", marketCap: 250_000_000_000),
             Stock(id: "600276", symbol: "sh600276", name: "恒瑞医药", industry: "医药", marketCap: 300_000_000_000)
         ]
+    }
+    private func isTradingDay(_ date: Date) -> Bool {
+        let weekday = Calendar.current.component(.weekday, from: date)
+        // 1 = 周日，7 = 周六；A股周末休市
+        return weekday != 1 && weekday != 7
+    }
+
+    private func previousTradingDay(before date: Date) -> String? {
+        var candidate = date
+        let calendar = Calendar.current
+        for _ in 0..<30 {
+            guard let previous = calendar.date(byAdding: .day, value: -1, to: candidate) else { return nil }
+            candidate = previous
+            if isTradingDay(candidate) {
+                return DateFormatter.yyyyMMdd.string(from: candidate)
+            }
+        }
+        return nil
     }
 }
 

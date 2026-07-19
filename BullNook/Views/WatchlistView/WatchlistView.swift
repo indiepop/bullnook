@@ -19,6 +19,9 @@ struct WatchlistView: View {
             }
             .background(Color.appBackground.ignoresSafeArea())
             .navigationTitle("自选股")
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .toolbarBackground(Color.appBackground, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .onAppear {
                 print("[Watchlist] WatchlistView onAppear, context=\(ObjectIdentifier(context))")
                 loadItems()
@@ -49,7 +52,7 @@ struct WatchlistView: View {
         List {
             Section {
                 if let lastUpdated = lastUpdated {
-                    Text("最后更新：\(lastUpdated.formatted(date: .omitted, time: .shortened))")
+                    Text("最后更新：\(lastUpdated.formatted(date: .numeric, time: .shortened))")
                         .font(.caption)
                         .foregroundStyle(Color.appTextSecondary)
                 }
