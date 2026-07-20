@@ -62,8 +62,12 @@ final class DailyPickViewModel {
     @discardableResult
     private func loadPicksIfAvailable(for date: String) -> Bool {
         let cached = cache.dailyPicks(for: date)
-        guard !cached.isEmpty else { return false }
+        guard !cached.isEmpty else {
+            print("[DailyPick] no cached picks for \(date), will generate")
+            return false
+        }
 
+        print("[DailyPick] using cached \(cached.count) picks for \(date)")
         picks = cached
         if let latest = cached.map({ $0.generatedAt }).max() {
             lastRefreshedAt = latest
@@ -236,7 +240,7 @@ final class DailyPickViewModel {
             return results.sorted { $0.rank < $1.rank }
         }
 
-        // 只更新分析文本，不再整体替换，避免 UI 跳动
+        // 只更新分析文本，不再整体替换，避免 UI 跳动，也避免 delete+insert 带来的唯一性冲突风险
         var updated = false
         for enrichedPick in enriched {
             if let index = picks.firstIndex(where: { $0.id == enrichedPick.id }) {
@@ -245,8 +249,12 @@ final class DailyPickViewModel {
             }
         }
         if updated {
-            cache.deleteAllDailyPicks(for: date)
-            cache.save(dailyPicks: picks)
+            do {
+                try context.save()
+                print("[DailyPick] LLM enrichment saved for \(date)")
+            } catch {
+                print("[DailyPick] LLM enrichment save failed: \(error)")
+            }
         }
         print("[DailyPick] LLM enrichment completed, updated: \(updated)")
     }

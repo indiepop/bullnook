@@ -16,7 +16,9 @@ final class StockCache {
             predicate: #Predicate { $0.date == date },
             sortBy: [SortDescriptor(\.rank)]
         )
-        return (try? context.fetch(descriptor)) ?? []
+        let items = (try? context.fetch(descriptor)) ?? []
+        print("[DailyPick] fetched \(items.count) picks for \(date)")
+        return items
     }
 
     func latestDailyPicks(limit: Int = 5) -> [DailyPick] {
@@ -31,7 +33,12 @@ final class StockCache {
         for pick in dailyPicks {
             context.insert(pick)
         }
-        try? context.save()
+        do {
+            try context.save()
+            print("[DailyPick] saved \(dailyPicks.count) records")
+        } catch {
+            print("[DailyPick] save failed: \(error)")
+        }
     }
 
     func deleteAllDailyPicks(for date: String) {
@@ -40,7 +47,12 @@ final class StockCache {
         for item in items {
             context.delete(item)
         }
-        try? context.save()
+        do {
+            try context.save()
+            print("[DailyPick] deleted \(items.count) records for \(date)")
+        } catch {
+            print("[DailyPick] delete failed: \(error)")
+        }
     }
 
     // MARK: - Historical Picks
